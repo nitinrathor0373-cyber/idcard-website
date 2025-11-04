@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Contact Us - ID Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ===== Favicon Setup ===== -->
+  <link rel="icon" href="/img/National_Thermal_Power_logo.svg.png" type="image/x-icon" />
+  <link rel="shortcut icon" href="/img/National_Thermal_Power_logo.svg.png" type="image/x-icon" />
+  <meta name="theme-color" content="#007bff" />
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background: #f5f7fa;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+   
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed; top: 0; left: 0;
+      width: 100%;
+      background: linear-gradient(90deg, #007bff, #00bcd4);
+      padding: 15px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 10;
+    }
+    .nav-left { display: flex; align-items: center; gap: 12px; }
+    .nav-logo {
+      width: 45px; height: 45px; border-radius: 50%;
+      background: white; padding: 3px; object-fit: contain;
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    }
+    .logo { color: white; font-size: 1em; font-weight: bold; }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .contact-link {
+      color: white; text-decoration: none; font-weight: 600;
+      padding: 8px 18px; background: rgba(255,255,255,0.25);
+      border-radius: 6px; transition: 0.3s;
+    }
+    .contact-link:hover { background: white; color: #007bff; transform: scale(1.05); }
+
+    /* ===== MENU ICON ===== */
+    .menu-container { position: relative; display: flex; align-items: center; }
+    .menu-icon {
+      font-size: 1.8em; color: white; cursor: pointer;
+      padding: 5px 10px; border-radius: 6px; transition: background 0.3s;
+    }
+    .menu-icon:hover { background: rgba(255,255,255,0.25); }
+    .dropdown {
+      position: absolute; top: 55px; right: 0;
+      background: white; border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      display: none; flex-direction: column;
+      min-width: 150px; z-index: 30;
+    }
+    .dropdown a {
+      padding: 10px 15px; color: #007bff;
+      text-decoration: none; font-weight: 600;
+      transition: background 0.3s;
+    }
+    .dropdown a:hover { background: #007bff; color: white; }
+    .dropdown.show { display: flex; }
+
+
+    /* ===== Contact Section ===== */
+    .contact-container {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 100px 20px 60px;
+    }
+
+    .contact-card {
+      background: #fff;
+      width: 100%;
+      max-width: 700px;
+      border-radius: 15px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+      padding: 40px 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeIn 0.6s ease;
+      text-align: center;
+      position: relative;
+    }
+
+    .contact-card h2 {
+      color: #007bff;
+      margin-bottom: 25px;
+      font-size: 1.8em;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 15px;
+      display: block;
+      width: 100%;
+      text-align: left;
+      color: #333;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      margin-top: 6px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 6px rgba(0, 123, 255, 0.2);
+      outline: none;
+    }
+
+    textarea { resize: none; height: 130px; }
+
+    #imagePreview {
+      margin-top: 10px;
+      max-width: 150px;
+      max-height: 150px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      object-fit: cover;
+      display: none;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px;
+      border: none;
+      background: linear-gradient(90deg, #007bff, #00bcd4);
+      color: white;
+      font-size: 1em;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #0066d3, #00a2b5);
+      transform: translateY(-2px);
+    }
+
+    .success {
+      color: green;
+      margin-top: 15px;
+      text-align: center;
+      display: none;
+      font-weight: 600;
+    }
+
+    /* ===== Loading Spinner ===== */
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 15px;
+      display: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #007bff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+
+    .loading-text {
+      font-weight: 600;
+      color: #007bff;
+      font-size: 1.1em;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    footer {
+      background: #007bff;
+      color: white;
+      text-align: center;
+      padding: 12px 0;
+      font-size: 0.9em;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ===== Navbar ===== -->
+   <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-left">
+        <a href="./index.html">
+      <img src="/img/National_Thermal_Power_logo.svg.png" class="nav-logo" alt="NTPC Logo" ></a>
+      <div class="logo">MAINTENANCE DEPARTMENT</div>
+    </div>
+    <div class="nav-right">
+      <div class="menu-container">
+        <div class="menu-icon" id="menuIcon">☰</div>
+        <div class="dropdown" id="dropdownMenu">
+          <a href="./index.html">Home</a>
+          <a href="./about.html">About</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== Contact Section ===== -->
+  <div class="contact-container">
+    <div class="contact-card">
+      <h2>Get in Touch</h2>
+
+      <label for="name">Full Name</label>
+      <input type="text" id="name" placeholder="Enter your name" required />
+
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="Enter your Gmail address" required
+             pattern="^[a-zA-Z0-9._%+-]+@gmail\.com$"
+             title="Please enter a valid Gmail address (e.g., example@gmail.com)" />
+
+      <label for="message">Message</label>
+      <textarea id="message" placeholder="Type your message..." required></textarea>
+
+      <label for="image">Attach Image (optional)</label>
+      <input type="file" id="image" accept="image/*" onchange="previewImage(event)">
+      <img id="imagePreview" alt="Preview" />
+
+      <button onclick="sendMessage()">Send Message</button>
+      <p class="success" id="successMsg">✅ Message sent successfully!</p>
+
+      <!-- ===== Loading Overlay ===== -->
+      <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Sending...</div>
+      </div>
+    </div>
+  </div>
+
+ <div style="
+  background-color: #002147;
+  color: white;
+  text-align: center;
+  padding: 20px 10px;
+  font-size: 14px;
+  margin-top: 40px;
+  border-top: 3px solid #ffcc00;
+">
+  <p>© <span id="year"></span> National Thermal Power Corporation Limited (NTPC Ltd.)</p>
+  <p style="margin: 5px 0;">Empowering India Through Energy</p>
+  <a href="https://www.ntpc.co.in" target="_blank" style="color:#ffcc00; text-decoration:none;">www.ntpc.co.in</a>
+</div>
+
+  <!-- ===== Backend Script ===== -->
+  <script>
+    
+    
+  document.getElementById("year").textContent = new Date().getFullYear();
+    
+  function previewImage(event) {
+    const file = event.target.files[0];
+    const preview = document.getElementById("imagePreview");
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        preview.src = e.target.result;
+        preview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    } else {
+      preview.src = "";
+      preview.style.display = "none";
+    }
+  }
+
+  async function sendMessage() {
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const message = document.getElementById("message").value.trim();
+    const image = document.getElementById("image").files[0];
+    const success = document.getElementById("successMsg");
+    const loadingOverlay = document.getElementById("loadingOverlay");
+
+    if (!name || !email || !message) {
+      alert("⚠️ Please fill in all fields before sending!");
+      return;
+    }
+
+    // ✅ Gmail-only validation
+    if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
+      alert("⚠️ Only Gmail addresses are allowed (e.g., example@gmail.com).");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("message", message);
+    if (image) formData.append("image", image);
+
+    try {
+      loadingOverlay.style.display = "flex"; // ✅ Show loading spinner
+      await new Promise(resolve => setTimeout(resolve, 1200)); // ⏳ Natural delay
+
+      const res = await fetch("http://localhost:5000/contact", {
+        method: "POST",
+        body: formData,
+      });
+
+      await new Promise(resolve => setTimeout(resolve, 500)); // smooth finish
+      loadingOverlay.style.display = "none"; // ✅ Hide loading after completion
+
+      if (res.ok) {
+        success.style.display = "block";
+        setTimeout(() => {
+          success.style.display = "none";
+          document.getElementById("name").value = "";
+          document.getElementById("email").value = "";
+          document.getElementById("message").value = "";
+          document.getElementById("image").value = "";
+          document.getElementById("imagePreview").style.display = "none";
+        }, 2500);
+      } else {
+        const errText = await res.text();
+        alert("❌ Failed to send message. Server says: " + errText);
+      }
+    } catch (err) {
+      loadingOverlay.style.display = "none"; // Hide loading on error
+      console.error("❌ Network Error:", err);
+      alert("⚠️ Cannot reach backend. Please ensure Node.js server is running on port 5000.");
+    }
+  }
+  
+  
+   // ===== MENU DROPDOWN =====
+    const menuIcon = document.getElementById("menuIcon");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+
+    menuIcon.addEventListener("click", () => {
+      dropdownMenu.classList.toggle("show");
+    });
+
+    window.addEventListener("click", (e) => {
+      if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        dropdownMenu.classList.remove("show");
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+
+

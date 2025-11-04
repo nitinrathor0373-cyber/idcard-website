@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us - NTPC ID Portal</title>
+
+  <link rel="icon" href="/img/National_Thermal_Power_logo.svg.png" type="image/x-icon" />
+  <link rel="shortcut icon" href="/img/National_Thermal_Power_logo.svg.png" type="image/x-icon" />
+  <meta name="theme-color" content="#007bff" />
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top left, #e3f2fd, #bbdefb);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-top: 80px;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed; top: 0; left: 0;
+      width: 100%;
+      background: linear-gradient(90deg, #007bff, #00bcd4);
+      padding: 15px 40px;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 10;
+    }
+    .nav-left { display: flex; align-items: center; gap: 12px; }
+    .nav-logo {
+      width: 45px; height: 45px; border-radius: 50%;
+      background: white; padding: 3px; object-fit: contain;
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    }
+    .logo { color: white; font-size: 1em; font-weight: bold; }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .contact-link {
+      color: white; text-decoration: none; font-weight: 600;
+      padding: 8px 18px; background: rgba(255,255,255,0.25);
+      border-radius: 6px; transition: 0.3s;
+    }
+    .contact-link:hover { background: white; color: #007bff; transform: scale(1.05); }
+
+    /* ===== MENU ICON ===== */
+    .menu-container { position: relative; display: flex; align-items: center; }
+    .menu-icon {
+      font-size: 1.8em; color: white; cursor: pointer;
+      padding: 5px 10px; border-radius: 6px; transition: background 0.3s;
+    }
+    .menu-icon:hover { background: rgba(255,255,255,0.25); }
+    .dropdown {
+      position: absolute; top: 55px; right: 0;
+      background: white; border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      display: none; flex-direction: column;
+      min-width: 150px; z-index: 30;
+    }
+    .dropdown a {
+      padding: 10px 15px; color: #007bff;
+      text-decoration: none; font-weight: 600;
+      transition: background 0.3s;
+    }
+    .dropdown a:hover { background: #007bff; color: white; }
+    .dropdown.show { display: flex; }
+
+    /* ===== ABOUT SECTION ===== */
+    .about-section {
+      width: 90%;
+      max-width: 1000px;
+      margin: 50px auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      padding: 40px;
+      text-align: center;
+    }
+    .about-section h1 {
+      color: #007bff;
+      font-size: 2.4em;
+      margin-bottom: 20px;
+    }
+    .about-section p {
+      color: #333;
+      font-size: 1.1em;
+      line-height: 1.8;
+      margin-bottom: 15px;
+    }
+    .about-section img {
+      width: 120px; height: 120px;
+      margin-bottom: 20px;
+    }
+
+    footer {
+      background: #007bff;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      position: fixed;
+      bottom: 0; left: 0; width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .about-section { padding: 25px; }
+      .about-section h1 { font-size: 1.8em; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-left">
+        <a href="./index.html">
+      <img src="/img/National_Thermal_Power_logo.svg.png" class="nav-logo" alt="NTPC Logo" ></a>
+      <div class="logo">MAINTENANCE DEPARTMENT</div>
+    </div>
+    <div class="nav-right">
+      <div class="menu-container">
+        <div class="menu-icon" id="menuIcon">☰</div>
+        <div class="dropdown" id="dropdownMenu">
+          <a href="./index.html">Home</a>
+          <a href="./about.html">About</a>
+          <a href="./contact.html">Contact</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ABOUT SECTION -->
+  <section class="about-section">
+    <img src="/img/National_Thermal_Power_logo.svg.png" alt="NTPC Logo">
+    <h1>About NTPC ID Portal</h1>
+    <p>The NTPC Employee ID Portal is designed to simplify the process of searching, verifying, and managing employee identity details within the Maintenance Department. It enables secure, quick, and user-friendly access to essential staff information.</p>
+    <p>Our mission is to empower NTPC employees with seamless digital tools that enhance operational efficiency, transparency, and data reliability. This platform reflects our commitment to technological advancement and organizational excellence.</p>
+    <p>By integrating innovation with simplicity, the ID Portal stands as a step forward in creating a more connected, efficient, and empowered NTPC community.</p>
+  </section>
+
+  <!-- FOOTER -->
+  <div style="
+  background-color: #002147;
+  color: white;
+  text-align: center;
+  padding: 20px 10px;
+  font-size: 14px;
+  margin-top: 40px;
+  border-top: 3px solid #ffcc00;
+">
+  <p>© <span id="year"></span> National Thermal Power Corporation Limited (NTPC Ltd.)</p>
+  <p style="margin: 5px 0;">Empowering India Through Energy</p>
+  <a href="https://www.ntpc.co.in" target="_blank" style="color:#ffcc00; text-decoration:none;">www.ntpc.co.in</a>
+</div>
+
+  <script>
+       
+  document.getElementById("year").textContent = new Date().getFullYear();
+    
+    // ===== MENU DROPDOWN =====
+    const menuIcon = document.getElementById("menuIcon");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+
+    menuIcon.addEventListener("click", () => {
+      dropdownMenu.classList.toggle("show");
+    });
+
+    window.addEventListener("click", (e) => {
+      if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        dropdownMenu.classList.remove("show");
+      }
+    });
+  </script>
+</body>
+</html>

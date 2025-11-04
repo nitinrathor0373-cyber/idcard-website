@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home</title>
+
+  <link rel="icon" href="/img/National_Thermal_Power_logo.svg.png" type="image/x-icon" />
+  <link rel="shortcut icon" href="/img/National_Thermal_Power_logo.svg.png" type="image/x-icon" />
+  <meta name="theme-color" content="#007bff" />
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+     background: linear-gradient(90deg, #0061ff, #60efff);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      background: linear-gradient(90deg, #007bff, #00bcd4);
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 20;
+    }
+    .nav-left { display: flex; align-items: center; gap: 12px; }
+    .nav-logo {
+      width: 45px; height: 45px; border-radius: 50%;
+      background: white; padding: 3px;
+      object-fit: contain; box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    }
+    .logo { color: white; font-size: 1em; font-weight: bold; }
+
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+
+    .search-box { display: flex; align-items: center; gap: 8px; transition: all 0.5s ease; }
+    .search-box input {
+      width: 0; opacity: 0;
+      padding: 7px 10px;
+      border: none;
+      border-radius: 4px;
+      transition: all 0.6s ease;
+      transform: translateX(100%);
+    }
+    .search-box.active input {
+      width: 220px; opacity: 1;
+      border: 1px solid #ddd; background: white;
+      transform: translateX(0);
+    }
+    .search-box button {
+      padding: 7px 15px; border: none; background: white; color: #007bff;
+      border-radius: 4px; cursor: pointer; font-weight: 600;
+    }
+    .search-box button:hover { background: #0056b3; color: white; }
+
+   
+    /* ===== MENU ICON & DROPDOWN ===== */
+.menu-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.menu-icon {
+  font-size: 1.8em;
+  color: white;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+
+.menu-icon:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.dropdown {
+  position: absolute;
+  top: 55px; /* below navbar */
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  display: none;
+  flex-direction: column;
+  min-width: 150px;
+  z-index: 30;
+}
+
+.dropdown a {
+  padding: 10px 15px;
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.dropdown a:hover {
+  background: #007bff;
+  color: white;
+}
+
+.dropdown.show {
+  display: flex;
+}
+
+
+    /* ===== SCROLL HEADER ===== */
+    .scroll-header {
+      width: 100%; overflow: hidden; white-space: nowrap;
+      background: linear-gradient(90deg, #256038, #00bbd4);
+      margin-top: 75px;
+    }
+    .scroll-content {
+      display: inline-flex; align-items: center; gap: 12px;
+      animation: scrollText 15s linear infinite;
+    }
+    .scroll-content img {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: white; padding: 2px;
+    }
+    @keyframes scrollText {
+      from { transform: translateX(100%); }
+      to { transform: translateX(-100%); }
+    }
+
+    /* ===== HERO SECTION ===== */
+    .hero-section {
+      position: relative;
+      width: 100%;
+      height: 80vh;
+      overflow: hidden;
+    }
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+    }
+    .hero-slide.active { opacity: 1; z-index: 2; }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(0.6);
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.35);
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 85%;
+      max-width: 1200px;
+      gap: 40px;
+    }
+
+    .hero-image { flex: 1; order: 1; display: flex; justify-content: flex-start; }
+    .hero-image img {
+      width: 100%; max-width: 480px;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+      animation: fadeInImage 2s ease;
+    }
+
+    .hero-text {
+      flex: 1; order: 2;
+      color: white;
+      text-align: right;
+      animation: fadeInText 2s ease;
+    }
+    .hero-text h1 { font-size: 2.3em; color: #fffacd; margin-bottom: 10px; }
+    .hero-text p { font-size: 1.1em; color: #f1f1f1; margin-bottom: 8px; }
+    .hero-text .tagline { font-size: 1.3em; font-weight: 600; color: #ffeb3b; }
+
+    @keyframes fadeInText {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeInImage {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .dots {
+      position: absolute;
+      bottom: 25px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 10px; z-index: 10;
+    }
+    .dot {
+      width: 12px; height: 12px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 50%; cursor: pointer;
+      transition: background 0.3s;
+    }
+    .dot.active { background: #ffeb3b; }
+
+    @media (max-width: 768px) {
+      .hero-content { flex-direction: column; text-align: center; gap: 20px; }
+      .hero-text { text-align: center; }
+      .hero-text h1 { font-size: 1.6em; }
+      .hero-text p { font-size: 1em; }
+      .hero-text .tagline { font-size: 1.1em; }
+      .hero-image img { max-width: 300px; }
+    }
+
+    /* ===== MAIN & FOOTER ===== */
+    main { padding: 20px 5% 100px; text-align: center; }
+
+    .main-heading h1 {
+      font-size: 2.2em;
+      font-weight: 700;
+      background: linear-gradient(90deg, #ff4081, #ff9100, #00e5ff, #7c4dff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    footer {
+      background: #007bff;
+      color: white;
+      text-align: center;
+      padding: 15px 0;
+      position: fixed;
+      bottom: 0; left: 0; width: 100%;
+    }
+
+.cards-wrapper {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+ 
+}
+
+.card-container {
+  perspective: 1000px;
+}
+
+.id-card {
+  width: 320px;
+  height: 420px;
+  position: relative;
+  transition: transform 0.9s;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+.id-card.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.front {
+  background: linear-gradient(135deg, #007bff, #00bcd4);
+  color: white;
+  text-align: center;
+}
+
+.front .corner-logo {
+  width: 60px;
+  margin-top: 10px;
+  background: white;
+  border-radius: 50%;
+}
+
+.front .profile-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 15px 0;
+  border: 3px solid white;
+  object-fit: cover;
+}
+
+.info-side h2 {
+  margin-bottom: 8px;
+  font-size: 1.4em;
+}
+
+.info-side p {
+  margin: 4px 0;
+  font-size: 0.95em;
+}
+
+.back {
+  background: white;
+  color: #333;
+  transform: rotateY(180deg);
+  padding: 20px;
+  text-align: left;
+}
+
+.back h3 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #007bff;
+}
+.back p {
+  font-size: 0.95em;
+  margin: 5px 0;
+  line-height: 1.4;
+}
+
+.back hr {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 10px 0;
+}
+
+.back .note {
+  margin-top: 20px;
+  font-style: italic;
+  color: #666;
+  text-align: center;
+}
+
+/* ===== PHOTO SCROLL SECTIONS ===== */
+.photo-scroll {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+  background: linear-gradient(90deg, #0061ff, #60efff);
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+}
+
+.photo-scroll .scroll-track {
+  display: inline-flex;
+  gap: 25px;
+  animation: scrollLeft 30s linear infinite;
+}
+
+.photo-scroll img {
+  width: 180px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: transform 0.4s;
+}
+
+.photo-scroll img:hover {
+  transform: scale(1.1);
+}
+
+/* Left-to-right motion */
+.photo-scroll.left-right .scroll-track {
+  animation-name: scrollRight;
+}
+
+/* Keyframes for both directions */
+@keyframes scrollLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes scrollRight {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+/* Responsive tweak */
+@media (max-width: 768px) {
+  .photo-scroll img {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+/* ===== TESTIMONIAL SCROLL ===== */
+.testimonial-scroll {
+  overflow: hidden;
+  width: 100%;
+}
+
+.testimonial-track {
+  display: inline-flex;
+  gap: 25px;
+  animation: scrollTestimonials 30s linear infinite;
+}
+
+.testimonial-card {
+  flex: 0 0 auto;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  padding: 20px;
+  width: 300px;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+  backdrop-filter: blur(5px);
+  transition: transform 0.4s;
+}
+
+.testimonial-card:hover {
+  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.testimonial-card p {
+  font-size: 0.95em;
+  font-style: italic;
+  line-height: 1.5;
+ 
+}
+
+.testimonial-card h4 {
+  font-size: 0.9em;
+  color: #ffeb3b;
+}
+
+@keyframes scrollTestimonials {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <img src="/img/National_Thermal_Power_logo.svg.png" class="nav-logo" alt="NTPC Logo" />
+      <div class="logo">MAINTENANCE DEPARTMENT</div>
+    </div>
+    <div class="nav-right">
+      <div class="search-box" id="searchBox">
+        <input type="text" id="searchInput" placeholder="Search by name..." />
+        <button id="searchBtn">🔍</button>
+      </div>
+      <!-- Add inside .nav-right (after Contact link) -->
+<div class="menu-container">
+  <div class="menu-icon" id="menuIcon">☰</div>
+  <div class="dropdown" id="dropdownMenu">
+    <a href="#">Home</a>
+    <a href="./contact.html">Contact</a>
+    <a href="./About.html">About</a>
+  </div>
+</div>
+
+    </div>
+  </nav>
+
+  <!-- Scrolling Header -->
+  <div class="scroll-header">
+    <div class="scroll-content">
+      <img src="/img/National_Thermal_Power_logo.svg.png" alt="NTPC Logo" />
+      <span>National Thermal Power Corporation — Employee ID Portal Search</span>
+    </div>
+  </div>
+
+  <!-- HERO SECTION -->
+  <section class="hero-section">
+    <div class="hero-slide active">
+      <video autoplay muted loop playsinline class="hero-bg">
+        <source src="/video/ntpc h - Made with Clipchamp.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-image">
+          <img src="/img/download.jpeg" alt="NTPC Building" />
+        </div>
+        <div class="hero-text">
+          <h1>Welcome to NTPC</h1>
+          <p>Employee ID Portal — Search, Verify & Manage Employee Information</p>
+          <h3 class="tagline">Empowering People • Powering the Nation ⚡</h3>
+        </div>
+      </div>
+    </div>
+<!-- one slide -->
+    <div class="hero-slide">
+      <video autoplay muted loop playsinline class="hero-bg">
+        <source src="/video/Ntp th - Made with Clipchamp.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-image">
+          <img src="/img/jpg.avif" alt="NTPC Plant" />
+        </div>
+        <div class="hero-text">
+          <h1>Reliable Power, Bright Future</h1>
+          <p>Delivering sustainable energy through innovation and excellence.</p>
+          <h3 class="tagline">Greener Energy • Cleaner Tomorrow 🌿</h3>
+        </div>
+      </div>
+    </div>
+<!-- 2 slide -->
+    <div class="hero-slide">
+      <video autoplay muted loop playsinline class="hero-bg">
+        <source src="/video/Untitled video - Made with Clipchamp.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-image">
+          <img src="/img/6c5fff30-cd90-11ea-a3c8-9e7c589e5a5c_1597576308341_1597576323344.jpg" alt="Team of Employees" />
+        </div>
+        <div class="hero-text">
+          <h1>Strong Workforce, Strong Nation</h1>
+          <p>Our dedicated employees drive progress every single day.</p>
+          <h3 class="tagline">Together We Power Progress 💪</h3>
+        </div>
+      </div>
+    </div>
+
+
+<!-- 3 slide -->
+    <div class="hero-slide">
+      <video autoplay muted loop playsinline class="hero-bg">
+        <source src="/video/Gas - Made with Clipchamp.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-image">
+          <img src="/img/1562443181-1396.webp" alt="Renewable Energy Plant" />
+        </div>
+        <div class="hero-text">
+          <h1>Building a Sustainable Tomorrow</h1>
+          <p>Leading India's power sector towards renewable transformation.</p>
+          <h3 class="tagline">Innovation • Responsibility • Growth 🌎</h3>
+        </div>
+      </div>
+    </div>
+<!-- 4 slide -->
+    <div class="hero-slide">
+      <video autoplay muted loop playsinline class="hero-bg">
+        <source src="/video/solar - Made with Clipchamp.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-image">
+          <img src="/img/Feature-Image19.png" alt="Renewable Energy Plant" />
+        </div>
+        <div class="hero-text">
+          <h1>Building a Sustainable Tomorrow</h1>
+          <p>Leading India's power sector towards renewable transformation.</p>
+          <h3 class="tagline">Innovation • Responsibility • Growth 🌎</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="dots">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </section>
+
+  <!-- PHOTO SCROLL SECTIONS -->
+
+   <h1 style="text-align: center;color: #101010; ">National_Thermal_Power_Plant</h1>
+<section class="photo-scroll left-right">
+  <div class="scroll-track">
+    <img src="/img/1562443181-1396.webp" alt="">
+    <img src="/img/6c5fff30-cd90-11ea-a3c8-9e7c589e5a5c_1597576308341_1597576323344.jpg" alt="">
+    <img src="/img/NTPC-Darlipali-Plant.jpg" alt="">
+    <img src="/img/images.jpeg" alt="">
+    <img src="/img/jpg (1).avif"alt="">
+    <img src="/img/power-.webp"alt="">
+    <!-- duplicate set for smooth loop -->
+    <img src="/img/download.jpeg" alt="">
+    <img src="/img/industrial-scene-featuring-large-blackened-silos-conveyor-belt-system-transporting-coal-rust-colored-ntpc-diesel-379643918.webp"alt="">
+    <img src="/img/jpg.avif" alt="">
+    <img src="/img/TNIE_import_2021_8_29_original_NEEPCO-thd.avif"alt="">
+    <img src="/img/Feature-Image19.png" alt="">
+    <img src="/img/dadri-dadri-national-thermal-power-corporation-plant_7094af28-1178-11e8-ba0b-8cab410cbd95.avif" alt="">
+  </div>
+</section>
+
+<!-- ===== LATEST UPDATES SECTION ===== -->
+<section id="latestUpdates" style="
+  background: linear-gradient(90deg, #0061ff, #60efff);
+  padding: 50px 5%;
+  text-align: center;
+  color: #003366;
+ 
+">
+  <h2 style="font-size: 2em; color: #007bff; margin-bottom: 15px;">📰 Latest Updates</h2>
+  <p style="font-size: 1.1em; margin-bottom: 25px;">Stay informed with the latest announcements and news from NTPC.</p>
+
+  <div id="updatesContainer" style="
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  ">
+    <!-- Updates will be loaded here -->
+  </div>
+</section>
+
+<!-- ===== EMPLOYEE COUNT SECTION ===== -->
+<section id="employeeCountSection" style="
+  background: linear-gradient(90deg, #0061ff, #60efff);
+  color: white;
+  height: 40vh;
+  text-align: center;
+  padding: 40px 0;
+">
+  <h2 style="font-size: 2em;">👥 Total Employees</h2>
+  <p id="employeeCount" style="
+    font-size: 3em;
+    text-align: center;
+    font-weight: bold;
+    transition: all 0.4s ease;
+  ">0</p>
+  <p style="font-size: 1em; opacity: 0.8;">(National_Thermal_Power_Plant)</p>
+</section>
+
+<!-- Main Section -->
+<main id="cardSection"></main>
+
+
+
+<!-- ===== TESTIMONIAL SCROLL SECTION ===== -->
+<section id="testimonials" style="
+  background: linear-gradient(90deg, #007bff, #00bcd4);
+  color: white;
+  padding: 50px 0;
+  overflow: hidden;
+  position: relative;
+">
+  <h2 style="text-align: center; font-size: 2em; margin-bottom: 20px;">🌟 What Our Employees Say</h2>
+
+  <div class="testimonial-scroll">
+    <div class="testimonial-track">
+      <div class="testimonial-card">
+        <p>“NTPC provides a great work-life balance and constant opportunities to grow.”</p>
+        <h4>— Neha Sharma, Manager</h4>
+      </div>
+      <div class="testimonial-card">
+        <p>“I’m proud to be part of India’s largest power producer working towards sustainability.”</p>
+        <h4>— Manish Jha, DY Manager</h4>
+      </div>
+      <div class="testimonial-card">
+        <p>“The team culture and leadership at NTPC inspire excellence every day.”</p>
+        <h4>— Achina Maheshwari, Manager</h4>
+      </div>
+      <div class="testimonial-card">
+        <p>“Innovation, discipline, and teamwork define NTPC — a great place to build a career!”</p>
+        <h4>— Mehrban Singh Meena, Senior Manager</h4>
+      </div>
+
+      <!-- Duplicate for infinite loop -->
+      <div class="testimonial-card">
+        <p>“NTPC provides a great work-life balance and constant opportunities to grow.”</p>
+        <h4>— Vijay Shanker Bharti, (DY Manager)</h4>
+      </div>
+      <div class="testimonial-card">
+        <p>“Innovation, discipline, and teamwork define NTPC — a great place to build a career!”</p>
+        <h4>— Priya Ranjhen, AGM</h4>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+ <div style="
+  background-color: #002147;
+  color: white;
+  text-align: center;
+  padding: 20px 10px;
+  font-size: 14px;
+ 
+  border-top: 3px solid #ffcc00;
+">
+  <p>© <span id="year"></span> National Thermal Power Corporation Limited (NTPC Ltd.)</p>
+  <p style="margin: 5px 0;">Empowering India Through Energy</p>
+  <a href="https://www.ntpc.co.in" target="_blank" style="color:#ffcc00; text-decoration:none;">www.ntpc.co.in</a>
+</div>
+
+<script>
+   document.getElementById("year").textContent = new Date().getFullYear();
+  
+// ===== MENU DROPDOWN =====
+const menuIcon = document.getElementById("menuIcon");
+const dropdownMenu = document.getElementById("dropdownMenu");
+
+menuIcon.addEventListener("click", () => dropdownMenu.classList.toggle("show"));
+window.addEventListener("click", (e) => {
+  if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
+    dropdownMenu.classList.remove("show");
+  }
+});
+
+// ===== HERO SLIDER =====
+const slides = document.querySelectorAll(".hero-slide");
+const dots = document.querySelectorAll(".dot");
+let index = 0;
+
+function showSlide(i) {
+  slides.forEach((s, n) => {
+    s.classList.toggle("active", n === i);
+    dots[n].classList.toggle("active", n === i);
+  });
+}
+function nextSlide() {
+  index = (index + 1) % slides.length;
+  showSlide(index);
+}
+dots.forEach((dot, i) =>
+  dot.addEventListener("click", () => {
+    index = i;
+    showSlide(index);
+  })
+);
+setInterval(nextSlide, 8000); // every 8 seconds
+
+// ===== SEARCH BOX =====
+const searchBtn = document.getElementById("searchBtn");
+const searchBox = document.getElementById("searchBox");
+const searchInput = document.getElementById("searchInput");
+
+searchBtn.addEventListener("click", (e) => {
+  if (!searchBox.classList.contains("active")) {
+    e.preventDefault();
+    searchBox.classList.add("active");
+    searchInput.focus();
+    return;
+  }
+  searchCard();
+});
+
+async function searchCard() {
+  const input = searchInput.value.trim();
+  if (!input) return;
+
+  try {
+    const res = await fetch(
+      `http://localhost:5000/api/cards/search?q=${encodeURIComponent(input)}`
+    );
+    if (!res.ok) throw new Error("Network error");
+    const cards = await res.json();
+
+    if (!cards.length) return alert("❌ Card not found!");
+
+    const cardHTML = cards
+      .map(
+        (p) => `
+      <div class="card-container" style="display:flex;justify-content:center;margin-bottom:25px;">
+        <div class="id-card" onclick="this.classList.toggle('flipped')">
+          <!-- FRONT -->
+          <div class="card-face front">
+            <img class="corner-logo" src="/img/National_Thermal_Power_logo.svg.png" alt="Logo" />
+            <img class="profile-img" src="http://localhost:5000${p.photo}" alt="Profile Photo" />
+            <div class="info-side">
+              <h2>${p.name}</h2>
+              <p><strong>ID No:</strong> ${p.empId}</p>
+              <p><strong>Position:</strong> ${p.position}</p>
+              <p><strong>Gender:</strong> ${p.gender}</p>
+              <p><strong>Phone:</strong> ${p.phone}</p>
+            </div>
+          </div>
+
+          <!-- BACK -->
+          <div class="card-face back">
+
+ <h3>${p.company || "NTPC Limited."}</h3>
+ <br />
+            <h3>Employee Skills</h3>
+            <p><strong>Primary Skills:</strong> ${
+              p.skills || "Technical Maintenance, Power Systems"
+            }</p>
+            <hr style="margin:10px 0;border:none;border-top:1px solid #ddd;">
+            <h3>Terms & Conditions</h3>
+            <p class="note">• This ID card is property of NTPC Ltd.<br>
+            • Misuse or unauthorized duplication is prohibited.<br>
+            • Please return if found to the HR Department.</p>
+          </div>
+        </div>
+      </div>`
+      )
+      .join("");          
+      
+      
+      // ===== POPUP CLOSE =====
+document.getElementById("closePopup").addEventListener("click", () => {
+  document.getElementById("popupModal").style.display = "none";
+});
+
+// Close popup on clicking outside
+document.getElementById("popupModal").addEventListener("click", (e) => {
+  if (e.target.id === "popupModal") {
+    document.getElementById("popupModal").style.display = "none";
+  }
+});
+
+    // Put result inside popup
+    document.getElementById("popupContent").innerHTML = `
+      <div class="main-heading"><h1>Employee Details</h1></div>
+      <div class="cards-wrapper">${cardHTML}</div>`;
+
+    // Show popup
+    document.getElementById("popupModal").style.display = "flex";
+  } catch (err) {
+    console.error(err);
+    alert("⚠️ Error fetching card details!");
+  }
+}
+
+
+// ===== EMPLOYEE COUNT FETCH & ANIMATION =====
+async function loadEmployeeCount() {
+  try {
+    const res = await fetch("http://localhost:5000/api/cards/count");
+    if (!res.ok) throw new Error("Network response failed");
+    const data = await res.json();
+    animateCount(data.total || 0);
+  } catch (err) {
+    console.error("Error fetching employee count:", err);
+  }
+}
+
+function animateCount(target) {
+  const el = document.getElementById("employeeCount");
+  if (!el) return;
+  let current = 0;
+  const duration = 1500;
+  const stepTime = Math.max(Math.floor(duration / (target || 1)), 20);
+  const timer = setInterval(() => {
+    current += Math.ceil(target / (duration / stepTime));
+    if (current >= target) {
+      current = target;
+      clearInterval(timer);
+    }
+    el.textContent = current.toLocaleString();
+  }, stepTime);
+}
+
+// ===== LATEST UPDATES SECTION =====
+async function loadUpdates() {
+  const container = document.getElementById("updatesContainer");
+  if (!container) return;
+
+  try {
+    const res = await fetch("http://localhost:5000/api/updates/all", {
+      headers: {
+        Authorization: localStorage.getItem("token")
+          ? `Bearer ${localStorage.getItem("token")}`
+          : "",
+      },
+    });
+
+    if (res.status === 403 || res.status === 401) {
+      container.innerHTML = "<p>⚠️ Please log in to see updates.</p>";
+      return;
+    }
+
+    const updates = await res.json();
+    if (!res.ok || updates.length === 0) {
+      container.innerHTML = "<p>No updates available.</p>";
+      return;
+    }
+
+    container.innerHTML = updates
+      .map(
+        (u) => `
+      <div style="
+        background:white;
+        color:#003366;
+        border-radius:10px;
+        padding:15px;
+        width:280px;
+        box-shadow:0 4px 10px rgba(0,0,0,0.1);
+        text-align:left;
+      ">
+        <h4 style="color:#007bff;">${u.title}</h4>
+        <p>${u.description}</p>
+        ${
+          u.link
+            ? `<p><a href="${u.link}" target="_blank" style="color:#007bff;text-decoration:none;">🔗 Read more</a></p>`
+            : ""
+        }
+        <small style="color:gray;">${new Date(
+          u.created_at
+        ).toLocaleString()}</small>
+      </div>`
+      )
+      .join("");
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = "<p>⚠️ Failed to load updates.</p>";
+  }
+}
+
+// ===== INITIAL LOAD =====
+window.addEventListener("load", () => {
+  loadEmployeeCount();
+  loadUpdates();
+  fetchAllCards();  // show all cards
+});
+
+
+
+
+</script>
+
+
+<!-- ===== POPUP MODAL ===== -->
+<div id="popupModal" style="
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+">
+  <div style="
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+  ">
+    <button id="closePopup" style="
+      position: absolute;
+      top: 10px; right: 15px;
+      background: #ff4d4d;
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    ">✖</button>
+    <div id="popupContent"></div>
+  </div>
+</div>
+
+
+
+</body>
+</html>
