@@ -6,8 +6,8 @@
   <title>Admin Login </title>
 
   <!-- ===== Favicon Setup ===== -->
-  <link rel="icon" href="/img/National_Thermal_Power_logo.svg.png" type="image/x-icon" />
-  <link rel="shortcut icon" href="/img/National_Thermal_Power_logo.svg.png" type="image/x-icon" />
+  <link rel="icon" href="img/National_Thermal_Power_logo.svg.png" type="image/x-icon" />
+  <link rel="shortcut icon" href="img/National_Thermal_Power_logo.svg.png" type="image/x-icon" />
   <meta name="theme-color" content="#007bff" />
 
   <style>
@@ -277,7 +277,7 @@
   <nav>
     <div class="logo-section">
       <a href="./index.html">
-      <img src="/img/National_Thermal_Power_logo.svg.png" alt="Logo" />
+      <img src="img/National_Thermal_Power_logo.svg.png" alt="Logo" />
       </a>
       <h1>ID Portal</h1>
     </div>
@@ -334,120 +334,120 @@
   <p style="margin: 5px 0;">Empowering India Through Energy</p>
   <a href="https://www.ntpc.co.in" target="_blank" style="color:#ffcc00; text-decoration:none;">www.ntpc.co.in</a>
 </div>
-  <script>
-    const container = document.getElementById("natureContainer");
+ <script>
+  const container = document.getElementById("natureContainer");
 
-    function createLeaves() {
-      container.innerHTML = "";
-      for (let i = 0; i < 12; i++) {
-        const leaf = document.createElement("div");
-        leaf.classList.add("leaf");
-        leaf.style.left = Math.random() * 100 + "vw";
-        leaf.style.animationDuration = (8 + Math.random() * 6) + "s";
-        leaf.style.animationDelay = Math.random() * 5 + "s";
-        container.appendChild(leaf);
-      }
+  function createLeaves() {
+    container.innerHTML = "";
+    for (let i = 0; i < 12; i++) {
+      const leaf = document.createElement("div");
+      leaf.classList.add("leaf");
+      leaf.style.left = Math.random() * 100 + "vw";
+      leaf.style.animationDuration = (8 + Math.random() * 6) + "s";
+      leaf.style.animationDelay = Math.random() * 5 + "s";
+      container.appendChild(leaf);
     }
+  }
 
-    function createStars() {
-      container.innerHTML = "";
-      for (let i = 0; i < 60; i++) {
-        const star = document.createElement("div");
-        star.classList.add("star");
-        star.style.left = Math.random() * 100 + "vw";
-        star.style.top = Math.random() * 100 + "vh";
-        star.style.animationDelay = Math.random() * 3 + "s";
-        container.appendChild(star);
-      }
+  function createStars() {
+    container.innerHTML = "";
+    for (let i = 0; i < 60; i++) {
+      const star = document.createElement("div");
+      star.classList.add("star");
+      star.style.left = Math.random() * 100 + "vw";
+      star.style.top = Math.random() * 100 + "vh";
+      star.style.animationDelay = Math.random() * 3 + "s";
+      container.appendChild(star);
     }
+  }
 
-    // Default: Leaves (Login Mode)
-    createLeaves();
+  // Default: Leaves (Login Mode)
+  createLeaves();
 
-    function toggleForm() {
-      const checkbox = document.getElementById("formToggle");
-      const loginForm = document.getElementById("loginFormContainer");
-      const signupForm = document.getElementById("signupFormContainer");
-      const body = document.body;
+  function toggleForm() {
+    const checkbox = document.getElementById("formToggle");
+    const loginForm = document.getElementById("loginFormContainer");
+    const signupForm = document.getElementById("signupFormContainer");
+    const body = document.body;
 
-      if (checkbox.checked) {
-        loginForm.style.display = "none";
-        signupForm.style.display = "block";
-        body.style.background = "linear-gradient(120deg, #141E30, #243B55)";
-        createStars();
+    if (checkbox.checked) {
+      loginForm.style.display = "none";
+      signupForm.style.display = "block";
+      body.style.background = "linear-gradient(120deg, #141E30, #243B55)";
+      createStars();
+    } else {
+      signupForm.style.display = "none";
+      loginForm.style.display = "block";
+      body.style.background = "linear-gradient(120deg, #007bff, #00bcd4)";
+      createLeaves();
+    }
+  }
+
+  // LOGIN HANDLER
+  document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const status = document.getElementById("status");
+
+    try {
+      const res = await fetch("https://idcard-w.onrender.com/api/auth/login", {  // ✅ updated
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        status.style.color = "green";
+        status.textContent = "✅ Login successful! Redirecting...";
+        localStorage.setItem("token", data.token);
+        setTimeout(() => window.location.href = "Vipinteam.html", 1000);
       } else {
-        signupForm.style.display = "none";
-        loginForm.style.display = "block";
-        body.style.background = "linear-gradient(120deg, #007bff, #00bcd4)";
-        createLeaves();
+        status.style.color = "red";
+        status.textContent = data.error || "❌ Invalid credentials!";
       }
+    } catch {
+      status.style.color = "red";
+      status.textContent = "⚠️ Server not responding!";
     }
+  });
 
-    // LOGIN HANDLER
-    document.getElementById("loginForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
-      const status = document.getElementById("status");
+  // SIGNUP HANDLER
+  document.getElementById("signupForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const username = document.getElementById("newUsername").value;
+    const password = document.getElementById("newPassword").value;
+    const email = document.getElementById("newEmail").value;
+    const status = document.getElementById("signupStatus");
 
-      try {
-        const res = await fetch("http://localhost:5000/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
+    try {
+      const res = await fetch("https://idcard-w.onrender.com/api/auth/signup", {  // ✅ updated
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, email })
+      });
+      const data = await res.json();
 
-        if (res.ok) {
-          status.style.color = "green";
-          status.textContent = "✅ Login successful! Redirecting...";
-          localStorage.setItem("token", data.token);
-          setTimeout(() => window.location.href = "Vipinteam.html", 1000);
-        } else {
-          status.style.color = "red";
-          status.textContent = data.error || "❌ Invalid credentials!";
-        }
-      } catch {
+      if (res.ok) {
+        status.style.color = "green";
+        status.textContent = "✅ Signup successful! Logging in...";
+        setTimeout(() => {
+          document.getElementById("formToggle").checked = false;
+          toggleForm();
+          document.getElementById("username").value = username;
+          document.getElementById("password").value = password;
+          document.getElementById("loginForm").dispatchEvent(new Event("submit"));
+        }, 1500);
+      } else {
         status.style.color = "red";
-        status.textContent = "⚠️ Server not responding!";
+        status.textContent = data.error || "❌ Signup failed!";
       }
-    });
-
-    // SIGNUP HANDLER
-    document.getElementById("signupForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const username = document.getElementById("newUsername").value;
-      const password = document.getElementById("newPassword").value;
-      const email = document.getElementById("newEmail").value;
-      const status = document.getElementById("signupStatus");
-
-      try {
-        const res = await fetch("http://localhost:5000/api/auth/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password, email })
-        });
-        const data = await res.json();
-
-        if (res.ok) {
-          status.style.color = "green";
-          status.textContent = "✅ Signup successful! Logging in...";
-          setTimeout(() => {
-            document.getElementById("formToggle").checked = false;
-            toggleForm();
-            document.getElementById("username").value = username;
-            document.getElementById("password").value = password;
-            document.getElementById("loginForm").dispatchEvent(new Event("submit"));
-          }, 1500);
-        } else {
-          status.style.color = "red";
-          status.textContent = data.error || "❌ Signup failed!";
-        }
-      } catch {
-        status.style.color = "red";
-        status.textContent = "⚠️ Server not responding!";
-      }
-    });
-  </script>
+    } catch {
+      status.style.color = "red";
+      status.textContent = "⚠️ Server not responding!";
+    }
+  });
+</script>
 </body>
 </html>
