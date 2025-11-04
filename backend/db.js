@@ -3,35 +3,29 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
+const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT } = process.env;
 
 async function initDB() {
   try {
-    // Step 1️⃣: Connect to MySQL (no specific DB yet)
-    const connection = await mysql.createConnection({
-      host: DB_HOST,
-      user: DB_USER,
-      password: DB_PASSWORD,
-    });
-
-    console.log("✅ MySQL Connected to Server");
-
-    // Step 2️⃣: Create database if not exists
-    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\``);
-    console.log(`📦 Database '${DB_NAME}' checked/created.`);
-
-    // Step 3️⃣: Create a connection pool for that DB
+    // ✅ Step 1️⃣: Create a connection pool directly (no CREATE DATABASE)
     const db = mysql.createPool({
       host: DB_HOST,
       user: DB_USER,
       password: DB_PASSWORD,
       database: DB_NAME,
+      port: DB_PORT,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
+      connectTimeout: 20000, // 20s for Render network delay
     });
 
-    // Step 4️⃣: Create tables if not exist
+    // ✅ Step 2️⃣: Test initial connection
+    const connection = await db.getConnection();
+    console.log("✅ MySQL Connected to Server");
+    connection.release();
+
+    // ✅ Step 3️⃣: Create tables if not exist
     await db.query(`
       CREATE TABLE IF NOT EXISTS auth (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -67,6 +61,6 @@ async function initDB() {
   }
 }
 
-// Step 5️⃣: Initialize DB and export
+// ✅ Step 4️⃣: Initialize DB and export
 const db = await initDB();
 export default db;
