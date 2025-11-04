@@ -8,31 +8,34 @@ import multer from "multer";
 import db from "./db.js";
 import authRoutes from "./routes/auth.js";
 import cardRoutes from "./routes/card.js";
-import updatesRoutes from "./routes/updates.js"; // ✅ Added this line
+import updatesRoutes from "./routes/updates.js";
+
 // ==================== CONFIG ====================
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 
 // ==================== MIDDLEWARE ====================
-app.use(cors({ origin: "*" }));
+app.use(
+  cors({
+    origin: "*", // Allow frontend from any domain (Netlify, localhost, etc.)
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-app.use("/api/updates", updatesRoutes);  // ✅ Add this
-
+// ✅ Ensure upload directory exists
+const uploadDir = path.join(process.cwd(), "uploads");
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
 // ✅ Serve uploaded photos (for ID cards & contact images)
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
-
-// ✅ Ensure upload directory exists
-const messageUploadPath = path.join(process.cwd(), "uploads", "messages");
-if (!fs.existsSync(messageUploadPath)) {
-  fs.mkdirSync(messageUploadPath, { recursive: true });
-}
+app.use("/uploads", express.static(uploadDir));
 
 // ==================== MULTER CONFIG ====================
+const messageUploadPath = path.join(uploadDir, "messages");
+if (!fs.existsSync(messageUploadPath))
+  fs.mkdirSync(messageUploadPath, { recursive: true });
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, messageUploadPath),
   filename: (req, file, cb) =>
@@ -49,7 +52,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/cards", cardRoutes);
 
 // 📰 Latest Updates CRUD
-app.use("/api/updates", updatesRoutes); // ✅ Added this line
+app.use("/api/updates", updatesRoutes);
 
 // ===== 📩 CONTACT FORM ROUTES =====
 
@@ -68,7 +71,7 @@ app.post("/contact", upload.single("image"), async (req, res) => {
       VALUES (?, ?, ?, ?)
     `;
     await db.query(sql, [name, email, message, image]);
-    res.status(200).json({ message: "Message saved successfully" });
+    res.status(200).json({ message: "✅ Message saved successfully!" });
   } catch (err) {
     console.error("❌ Error saving message:", err);
     res.status(500).json({ error: "Database error" });
