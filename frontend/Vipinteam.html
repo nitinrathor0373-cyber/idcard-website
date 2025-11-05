@@ -665,6 +665,10 @@ button[type="submit"]:hover {
     table.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
     try {
       const res = await fetch("https://idcard-w.onrender.com/messages");
+      if (!res.ok) {
+        table.innerHTML = "<tr><td colspan='6'>⚠️ Failed to fetch messages.</td></tr>";
+        return;
+      }
       const messages = await res.json();
       if (!messages.length) {
         table.innerHTML = "<tr><td colspan='6'>No messages found.</td></tr>";
@@ -680,7 +684,8 @@ button[type="submit"]:hover {
           <td>${new Date(msg.created_at).toLocaleString()}</td>
         </tr>
       `).join("");
-    } catch {
+    } catch (err) {
+      console.error("Error fetching messages:", err);
       table.innerHTML = "<tr><td colspan='6'>⚠️ Failed to load messages.</td></tr>";
     }
   }
@@ -773,7 +778,7 @@ button[type="submit"]:hover {
     fetchCards();
     refreshMessages();
     fetchUpdates();
-    fetchTestimonials(); // ✅ new addition
+    if (typeof fetchTestimonials === "function") fetchTestimonials(); // avoid error if missing
   });
 </script>
 </body>
