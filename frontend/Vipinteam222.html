@@ -422,7 +422,7 @@
     const status = document.getElementById("signupStatus");
 
     try {
-      const res = await fetch("https://idcard-w.onrender.com/api/auth/signup", {  // ✅ updated
+      const res = await fetch("https://mtpdepartment.onrender.com/api/auth/signup", {  // ✅ updated
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password, email })
