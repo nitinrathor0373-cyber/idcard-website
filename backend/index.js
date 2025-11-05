@@ -8,6 +8,7 @@ import multer from "multer";
 import db from "./db.js";
 import authRoutes from "./routes/auth.js";
 import cardRoutes from "./routes/card.js";
+import contactRoutes from "./routes/contact.js";
 import updatesRoutes from "./routes/updates.js";
 
 // ==================== CONFIG ====================
@@ -16,13 +17,21 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 
 // ==================== MIDDLEWARE ====================
+// ✅ Allow access from your frontend (Netlify / Vercel / localhost)
 app.use(
   cors({
-    origin: "*", // Allow frontend from any domain (Netlify, localhost, etc.)
+    origin: [
+      "http://localhost:5000", // for local testing
+      "https://mtp-tech.onrender.com", // ✅ your frontend Netlify domain (change if needed)
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/messages", contactRoutes);
 
 // ✅ Ensure upload directory exists
 const uploadDir = path.join(process.cwd(), "uploads");
@@ -53,6 +62,9 @@ app.use("/api/cards", cardRoutes);
 
 // 📰 Latest Updates CRUD
 app.use("/api/updates", updatesRoutes);
+
+app.use("/uploads/messages", express.static("uploads/messages"));
+
 
 // ===== 📩 CONTACT FORM ROUTES =====
 
@@ -115,7 +127,8 @@ app.use((err, req, res, next) => {
     console.error("❌ MySQL Connection Failed:", err);
   }
 
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-  });
+  // ✅ Important: Use 0.0.0.0 for Render, not localhost
+app.listen(process.env.PORT || "0.0.0.0", () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
 })();

@@ -6,26 +6,27 @@
   <title>Admin Panel</title>
 
   <!-- ===== Favicon Setup ===== -->
-  <link rel="icon" href="frontend/img/National_Thermal_Power_logo.svg.png" type="image/x-icon" />
-  <link rel="shortcut icon" href="frontend/img/National_Thermal_Power_logo.svg.png" type="image/x-icon" />
+  <link rel="icon" href="/img/National_Thermal_Power_logo.svg.png" type="image/x-icon" />
+  <link rel="shortcut icon" href="/img/National_Thermal_Power_logo.svg.png" type="image/x-icon" />
   <meta name="theme-color" content="#007bff" />
 
-  <style>
-    /* ==================== GLOBAL ==================== */
-    * {
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
+<style>
+/* ==================== GLOBAL ==================== */
+* {
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
 
-    body {
-      background: #f5f7fa;
-      margin: 0;
-      color: #333;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    /* ==================== HEADER ==================== */
+body {
+  background: #f5f7fa;
+  margin: 0;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==================== HEADER ==================== */
 header {
   background: linear-gradient(90deg, #0061ff, #60efff);
   color: white;
@@ -38,7 +39,7 @@ header {
   position: sticky;
   top: 0;
   z-index: 1000;
-  flex-wrap: nowrap; /* keeps all elements on one line */
+  flex-wrap: nowrap;
 }
 
 .logo-container {
@@ -49,12 +50,13 @@ header {
   min-width: 0;
 }
 
-.logo-container  {
+.logo-container img {
   height: 45px;
   width: 45px;
   object-fit: contain;
   background: white;
   padding: 4px;
+  border-radius: 50%;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   flex-shrink: 0;
 }
@@ -78,7 +80,6 @@ header {
   cursor: pointer;
   transition: all 0.3s;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-  flex-shrink: 0;
 }
 
 .logout-btn:hover {
@@ -86,174 +87,182 @@ header {
   transform: translateY(-2px);
 }
 
-/* ✅ Responsive tweak: still keeps logout on the right */
-@media (max-width: 768px) {
+/* ✅ Responsive Header */
+@media (max-width: 600px) {
   header {
-    flex-wrap: nowrap;
+    flex-direction: row;
     justify-content: space-between;
+    padding: 10px 14px;
   }
 
   .logo-container h1 {
-    font-size: 1.1rem;
+    font-size: 1rem;
+  }
+
+  .logo-container img {
+    height: 35px;
+    width: 35px;
   }
 
   .logout-btn {
-    padding: 6px 12px;
-    font-size: 0.9rem;
+    padding: 6px 10px;
+    font-size: 0.85rem;
   }
 }
 
+/* ==================== MAIN CONTAINER ==================== */
+.container {
+  flex: 1;
+  margin: 20px auto;
+  width: 95%;
+  max-width: 1100px;
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
 
-    /* ==================== MAIN CONTENT (unchanged) ==================== */
-    .container {
-      flex: 1;
-      margin: 30px auto;
-      width: 95%;
-      max-width: 1100px;
-      background: white;
-      padding: 25px;
-      border-radius: 14px;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
-    }
+.container:hover {
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+}
 
-    .container:hover {
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
-    }
+h2 {
+  text-align: center;
+  color: #0061ff;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  position: relative;
+}
 
-    h2 {
-      text-align: center;
-      color: #0061ff;
-      font-size: 1.5rem;
-      margin-bottom: 25px;
-      position: relative;
-    }
+h2::after {
+  content: '';
+  display: block;
+  width: 70px;
+  height: 3px;
+  background: #0061ff;
+  margin: 10px auto 0;
+  border-radius: 5px;
+}
 
-    h2::after {
-      content: '';
-      display: block;
-      width: 70px;
-      height: 3px;
-      background: #0061ff;
-      margin: 10px auto 0;
-      border-radius: 5px;
-    }
+/* ==================== ADD BUTTON ==================== */
+.add-card-section {
+  text-align: center;
+  margin-bottom: 25px;
+}
 
-    /* ==================== ADD BUTTON ==================== */
-    .add-card-section {
-      text-align: center;
-      margin-bottom: 25px;
-    }
+.add-card-section button {
+  background: linear-gradient(90deg, #007bff, #00bcd4);
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 3px 10px rgba(0, 123, 255, 0.3);
+}
 
-    .add-card-section button {
-      background: linear-gradient(90deg, #007bff, #00bcd4);
-      border: none;
-      padding: 10px 20px;
-      color: white;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 3px 10px rgba(0, 123, 255, 0.3);
-    }
+.add-card-section button:hover {
+  background: linear-gradient(90deg, #0061ff, #00a2d4);
+  transform: translateY(-2px);
+}
 
-    .add-card-section button:hover {
-      background: linear-gradient(90deg, #0061ff, #00a2d4);
-      transform: translateY(-2px);
-    }
+/* ==================== TABLE ==================== */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
 
-    /* ==================== TABLE ==================== */
-    .table-wrapper {
-      overflow-x: auto;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 700px;
-    }
+th, td {
+  padding: 12px 14px;
+  text-align: center;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
 
-    th, td {
-      padding: 12px 14px;
-      text-align: center;
-      font-size: 0.95rem;
-      white-space: nowrap;
-    }
+th {
+  background: #0061ff;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+}
 
-    th {
-      background: #0061ff;
-      color: white;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
+tr:nth-child(even) {
+  background: #f9fbff;
+}
 
-    tr:nth-child(even) {
-      background: #f9fbff;
-    }
+tr:hover {
+  background: #eef5ff;
+}
 
-    tr:hover {
-      background: #eef5ff;
-    }
+/* Table Image */
+td img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #007bff33;
+  transition: transform 0.3s;
+}
 
-     {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #007bff33;
-      transition: transform 0.3s;
-    }
+td img:hover {
+  transform: scale(1.1);
+}
 
-    img:hover {
-      transform: scale(1.1);
-    }
+/* Table Buttons */
+.delete-btn {
+  background: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.9rem;
+}
 
-    .delete-btn {
-      background: #ff4d4d;
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-size: 0.9rem;
-    }
+.delete-btn:hover {
+  background: #d63031;
+  transform: translateY(-1px);
+}
 
-    .delete-btn:hover {
-      background: #d63031;
-      transform: translateY(-1px);
-    }
+/* ✅ Responsive Table */
+@media (max-width: 768px) {
+  table {
+    font-size: 0.85rem;
+  }
+  th, td {
+    padding: 8px 10px;
+  }
+  td img {
+    width: 40px;
+    height: 40px;
+  }
+}
 
-    .message-header {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 10px;
-    }
+@media (max-width: 480px) {
+  .table-wrapper {
+    overflow-x: scroll;
+  }
+  table {
+    min-width: 600px;
+  }
+}
 
-    .refresh-btn {
-      background: #0061ff;
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-
-    .refresh-btn:hover {
-      background: #004ccc;
-      transform: translateY(-1px);
-    }
-
-    /* ==================== POPUP ==================== */
+/* ==================== POPUP ==================== */
 .popup {
   display: none;
   position: fixed;
-  top: 70px; /* just below the navbar */
+  top: 70px;
   left: 0;
   width: 100%;
   height: calc(100% - 70px);
@@ -261,7 +270,7 @@ header {
   justify-content: center;
   align-items: flex-start;
   z-index: 10;
-  padding-top: 30px; /* space between navbar and popup */
+  padding-top: 30px;
   overflow-y: auto;
 }
 
@@ -281,77 +290,78 @@ header {
   to { transform: translateY(0); opacity: 1; }
 }
 
-    .popup-content h3 {
-      margin-top: 0;
-      text-align: center;
-      color: #0061ff;
-    }
+.popup-content h3 {
+  margin-top: 0;
+  text-align: center;
+  color: #0061ff;
+}
 
-    label {
-      display: block;
-      margin: 10px 0 5px;
-      font-weight: 600;
-    }
+label {
+  display: block;
+  margin: 10px 0 5px;
+  font-weight: 600;
+}
 
-    input, textarea, select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 0.95rem;
-      transition: border 0.3s;
-    }
+input, textarea, select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+  transition: border 0.3s;
+}
 
-    input:focus, textarea:focus, select:focus {
-      outline: none;
-      border-color: #007bff;
-      box-shadow: 0 0 4px rgba(0, 123, 255, 0.2);
-    }
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.2);
+}
 
-    button[type="submit"] {
-      width: 100%;
-      margin-top: 15px;
-      background: linear-gradient(90deg, #007bff, #00bcd4);
-      color: white;
-      font-weight: 600;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
+button[type="submit"] {
+  width: 100%;
+  margin-top: 15px;
+  background: linear-gradient(90deg, #007bff, #00bcd4);
+  color: white;
+  font-weight: 600;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
 
-    button[type="submit"]:hover {
-      background: linear-gradient(90deg, #0061ff, #00a2d4);
-      transform: translateY(-1px);
-    }
+button[type="submit"]:hover {
+  background: linear-gradient(90deg, #0061ff, #00a2d4);
+  transform: translateY(-1px);
+}
 
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #ff4d4d;
-      border: none;
-      color: white;
-      border-radius: 50%;
-      width: 28px;
-      height: 28px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.3s;
-    }
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ff4d4d;
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+}
 
-    .close-btn:hover {
-      background: #d63031;
-      transform: rotate(90deg);
-    }
+.close-btn:hover {
+  background: #d63031;
+  transform: rotate(90deg);
+}
 
-    #uploadStatus {
-      text-align: center;
-      margin-top: 10px;
-      font-weight: 600;
-    }
+#uploadStatus {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: 600;
+}
 
+/* ==================== UPDATES SECTION ==================== */
 .updates-section {
   background: #f0f6ff;
   border: 1px solid #cce5ff;
@@ -359,14 +369,17 @@ header {
   padding: 20px;
   margin-top: 30px;
 }
+
 .updates-section h2 {
   color: #0061ff;
   text-align: center;
 }
+
 .updates-section ul {
   list-style: none;
   padding: 0;
 }
+
 .updates-section li {
   background: white;
   margin: 8px 0;
@@ -375,15 +388,26 @@ header {
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
+/* ✅ Responsive Adjustments for Containers */
+@media (max-width: 480px) {
+  .container {
+    padding: 14px;
+    border-radius: 10px;
+  }
+  h2 {
+    font-size: 1.1rem;
+  }
+}
+</style>
 
-  </style>
+
 </head>
 
 <body>
   <header>
   <div class="logo-container">
     <a href="./index.html">
-    <img src="frontend/img/National_Thermal_Power_logo.svg.png" alt="Logo">
+    <img src="/img/National_Thermal_Power_logo.svg.png" alt="Logo">
     </a>
     <h1>Admin Dashboard</h1>
   </div>
@@ -641,6 +665,10 @@ header {
     table.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
     try {
       const res = await fetch("https://idcard-w.onrender.com/messages");
+      if (!res.ok) {
+        table.innerHTML = "<tr><td colspan='6'>⚠️ Failed to fetch messages.</td></tr>";
+        return;
+      }
       const messages = await res.json();
       if (!messages.length) {
         table.innerHTML = "<tr><td colspan='6'>No messages found.</td></tr>";
@@ -656,7 +684,8 @@ header {
           <td>${new Date(msg.created_at).toLocaleString()}</td>
         </tr>
       `).join("");
-    } catch {
+    } catch (err) {
+      console.error("Error fetching messages:", err);
       table.innerHTML = "<tr><td colspan='6'>⚠️ Failed to load messages.</td></tr>";
     }
   }
@@ -749,7 +778,7 @@ header {
     fetchCards();
     refreshMessages();
     fetchUpdates();
-    fetchTestimonials(); // ✅ new addition
+    if (typeof fetchTestimonials === "function") fetchTestimonials(); // avoid error if missing
   });
 </script>
 </body>
