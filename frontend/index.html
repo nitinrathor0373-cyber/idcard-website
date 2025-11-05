@@ -849,27 +849,39 @@ function animateCount(target) {
 }
 
 /* ================= UPDATES ================= */
+/* ================= PUBLIC UPDATES ================= */
 async function loadUpdates() {
   const container = document.getElementById("updatesContainer");
   if (!container) return;
+
   try {
     const res = await fetch("https://idcard-w.onrender.com/api/updates/all");
+    if (!res.ok) throw new Error("Network response not ok");
     const updates = await res.json();
 
-    if (!res.ok || !updates.length) {
+    if (!updates.length) {
       container.innerHTML = "<p>No updates available.</p>";
       return;
     }
 
     container.innerHTML = updates.map(u => `
-      <div style="background:white;color:#003366;border-radius:10px;padding:15px;width:280px;box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+      <div style="
+        background: white;
+        color: #003366;
+        border-radius: 10px;
+        padding: 15px;
+        width: 280px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        margin: 10px;
+      ">
         <h4 style="color:#007bff;">${u.title}</h4>
         <p>${u.description}</p>
         ${u.link ? `<p><a href="${u.link}" target="_blank" style="color:#007bff;text-decoration:none;">🔗 Read more</a></p>` : ""}
         <small style="color:gray;">${new Date(u.created_at).toLocaleString()}</small>
-      </div>`).join("");
+      </div>
+    `).join("");
   } catch (err) {
-    console.error(err);
+    console.error("Error loading updates:", err);
     container.innerHTML = "<p>⚠️ Failed to load updates.</p>";
   }
 }
