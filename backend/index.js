@@ -13,7 +13,7 @@ import updatesRoutes from "./routes/updates.js";
 // ==================== CONFIG ====================
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 5000;
 
 // ==================== MIDDLEWARE ====================
 // ✅ Allow access from your frontend (Netlify / Vercel / localhost)
@@ -123,7 +123,7 @@ app.use((err, req, res, next) => {
   }
 
   // ✅ Important: Use 0.0.0.0 for Render, not localhost
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-  });
+app.listen(process.env.PORT || 5000, "0.0.0.0", () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
 })();
