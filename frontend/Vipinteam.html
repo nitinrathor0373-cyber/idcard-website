@@ -706,6 +706,7 @@ button[type="submit"]:hover {
   }
 
   /* ================== UPDATES MANAGEMENT ================== */
+  /* ================== UPDATES MANAGEMENT ================== */
   function openUpdatePopup() {
     document.getElementById("updatePopup").style.display = "flex";
   }
@@ -713,6 +714,7 @@ button[type="submit"]:hover {
     document.getElementById("updatePopup").style.display = "none";
   }
 
+  // ➕ Add Update (Admin Only)
   document.getElementById("updateForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const status = document.getElementById("updateStatus");
@@ -747,16 +749,13 @@ button[type="submit"]:hover {
     }
   });
 
+  // 📜 Fetch Updates (Public Access)
   async function fetchUpdates() {
     const tableBody = document.querySelector("#updatesTable tbody");
     tableBody.innerHTML = "<tr><td colspan='5'>Loading...</td></tr>";
 
     try {
-      const res = await fetch(`${API_BASE}/api/updates/all`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (handleAuthError(res)) return;
+      const res = await fetch(`${API_BASE}/api/updates/all`);
       const updates = await res.json();
 
       if (!res.ok || updates.length === 0) {
@@ -778,6 +777,7 @@ button[type="submit"]:hover {
     }
   }
 
+  // 🗑 Delete Update (Admin Only)
   async function deleteUpdate(id) {
     if (!confirm("Are you sure you want to delete this update?")) return;
     try {
@@ -801,10 +801,10 @@ button[type="submit"]:hover {
   }
 
   /* ================== INIT ALL ================== */
-  window.addEventListener("load", () => {
-    fetchCards();
-    refreshMessages();
+window.addEventListener("load", () => {
     fetchUpdates();
+    if (typeof fetchCards === "function") fetchCards();
+    if (typeof refreshMessages === "function") refreshMessages();
     if (typeof fetchTestimonials === "function") fetchTestimonials();
   });
 </script>
