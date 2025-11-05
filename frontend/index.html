@@ -779,7 +779,7 @@ async function searchCard() {
         <div class="id-card" onclick="this.classList.toggle('flipped')">
           <div class="card-face front">
             <img class="corner-logo" src="/img/National_Thermal_Power_logo.svg.png" alt="Logo" />
-            <img class="profile-img" src="https://idcard-w.onrender.com${p.photo}" alt="Profile Photo" />
+            <img class="profile-img" src="https://mtpdepartment.onrender.com${p.photo}" alt="Profile Photo" />
             <div class="info-side">
               <h2>${p.name}</h2>
               <p><strong>ID No:</strong> ${p.empId}</p>
@@ -911,7 +911,7 @@ async function refreshMessages() {
   table.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
 
   try {
-    const res = await fetch("https://idcard-w.onrender.com/messages");
+    const res = await fetch("https://mtpdepartment.onrender.com/messages");
     const messages = await res.json();
 
     if (!messages.length) {
@@ -940,7 +940,7 @@ async function fetchAllCards() {
   const container = document.getElementById("cardsContainer");
   if (!container) return; // Not on the cards page
   try {
-    const res = await fetch("https://idcard-w.onrender.com/api/cards/all");
+    const res = await fetch("https://mtpdepartment.onrender.com/api/cards/all");
     const cards = await res.json();
     container.innerHTML = cards.length
       ? cards.map(c => `<div>${c.name}</div>`).join("")
