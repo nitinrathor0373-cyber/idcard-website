@@ -280,11 +280,11 @@
 </div>
 
   <!-- ===== Backend Script ===== -->
-  <script>
-    
-    
+<script>
+  // ===== Year in Footer =====
   document.getElementById("year").textContent = new Date().getFullYear();
-    
+
+  // ===== Image Preview =====
   function previewImage(event) {
     const file = event.target.files[0];
     const preview = document.getElementById("imagePreview");
@@ -302,6 +302,7 @@
     }
   }
 
+  // ===== Send Message =====
   async function sendMessage() {
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("email").value.trim();
@@ -327,17 +328,23 @@
     formData.append("message", message);
     if (image) formData.append("image", image);
 
-    try {
-      loadingOverlay.style.display = "flex"; // ✅ Show loading spinner
-      await new Promise(resolve => setTimeout(resolve, 1200)); // ⏳ Natural delay
+    // ✅ Automatically detect backend URL
+    const backendURL =
+      window.location.hostname === "localhost"
+        ? "http://localhost:10000" // Local backend
+        : "https://idcard-website-backend.onrender.com"; // 🔁 Replace with your Render backend URL
 
-      const res = await fetch("http://localhost:5000/contact", {
+    try {
+      loadingOverlay.style.display = "flex"; // Show loading
+      await new Promise(resolve => setTimeout(resolve, 1200)); // smooth delay
+
+      const res = await fetch(`${backendURL}/contact`, {
         method: "POST",
         body: formData,
       });
 
       await new Promise(resolve => setTimeout(resolve, 500)); // smooth finish
-      loadingOverlay.style.display = "none"; // ✅ Hide loading after completion
+      loadingOverlay.style.display = "none";
 
       if (res.ok) {
         success.style.display = "block";
@@ -354,26 +361,25 @@
         alert("❌ Failed to send message. Server says: " + errText);
       }
     } catch (err) {
-      loadingOverlay.style.display = "none"; // Hide loading on error
+      loadingOverlay.style.display = "none";
       console.error("❌ Network Error:", err);
-      alert("⚠️ Cannot reach backend. Please ensure Node.js server is running on port 5000.");
+      alert("⚠️ Cannot reach backend. Please ensure Node.js server is running or deployed backend URL is correct.");
     }
   }
-  
-  
-   // ===== MENU DROPDOWN =====
-    const menuIcon = document.getElementById("menuIcon");
-    const dropdownMenu = document.getElementById("dropdownMenu");
 
-    menuIcon.addEventListener("click", () => {
-      dropdownMenu.classList.toggle("show");
-    });
+  // ===== MENU DROPDOWN =====
+  const menuIcon = document.getElementById("menuIcon");
+  const dropdownMenu = document.getElementById("dropdownMenu");
 
-    window.addEventListener("click", (e) => {
-      if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
-        dropdownMenu.classList.remove("show");
-      }
-    });
-  </script>
+  menuIcon.addEventListener("click", () => {
+    dropdownMenu.classList.toggle("show");
+  });
+
+  window.addEventListener("click", e => {
+    if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
+      dropdownMenu.classList.remove("show");
+    }
+  });
+</script>
 </body>
 </html>
