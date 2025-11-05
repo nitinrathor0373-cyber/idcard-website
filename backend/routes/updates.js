@@ -4,7 +4,7 @@ import verifyToken from "../middleware/verifyToken.js";
 
 const router = express.Router();
 
-// ➕ Add new update (with optional link)
+// ➕ Add new update (admin only)
 router.post("/add", verifyToken, async (req, res) => {
   const { title, description, link } = req.body;
 
@@ -23,8 +23,8 @@ router.post("/add", verifyToken, async (req, res) => {
   }
 });
 
-// 📜 Get all updates
-router.get("/all", verifyToken, async (req, res) => {
+// 📜 Get all updates (✅ public — no verifyToken)
+router.get("/all", async (req, res) => {
   try {
     const [updates] = await db.query(
       "SELECT * FROM updates ORDER BY created_at DESC"
@@ -36,7 +36,7 @@ router.get("/all", verifyToken, async (req, res) => {
   }
 });
 
-// 🗑 Delete update
+// 🗑 Delete update (admin only)
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
     await db.query("DELETE FROM updates WHERE id = ?", [req.params.id]);
