@@ -7,22 +7,25 @@ const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT } = process.env;
 
 async function initDB() {
   try {
-    // ✅ Step 1️⃣: Create a connection pool directly (no CREATE DATABASE)
+    // ✅ Step 1️⃣: Create a connection pool
     const db = mysql.createPool({
       host: DB_HOST,
       user: DB_USER,
       password: DB_PASSWORD,
       database: DB_NAME,
-      port: DB_PORT,
+      port: DB_PORT || 3306,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
-      connectTimeout: 20000, // 20s for Render network delay
+      connectTimeout: 20000, // prevent Render timeout issues
+      ssl: {
+        rejectUnauthorized: false, // ✅ Needed for Render, PlanetScale, or remote MySQL
+      },
     });
 
     // ✅ Step 2️⃣: Test initial connection
     const connection = await db.getConnection();
-    console.log("✅ MySQL Connected to Server");
+    console.log("✅ MySQL Connected Successfully!");
     connection.release();
 
     // ✅ Step 3️⃣: Create tables if not exist
@@ -52,19 +55,16 @@ async function initDB() {
       )
     `);
 
-
-
-     await db.query(`
-       CREATE TABLE IF NOT EXISTS messages (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
-  message TEXT NOT NULL,
-  image VARCHAR(255),
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS messages (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        image VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
     `);
-
 
     console.log("🧩 Tables checked/created successfully!");
     return db;
