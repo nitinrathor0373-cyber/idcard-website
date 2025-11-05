@@ -1,22 +1,20 @@
 import express from "express";
 import dotenv from "dotenv";
-import db from "../db.js"; // ✅ MySQL connection
+import db from "../db.js"; // MySQL connection
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
 dotenv.config();
 const router = express.Router();
 
-/**
- * ✅ LOGIN ROUTE (For Admins)
- * 1. Checks .env admin credentials
- * 2. Checks database-stored admins
- */
+// ------------------ LOGIN ------------------
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
+  if (!username || !password)
+    return res.status(400).json({ error: "⚠️ Username & password required" });
 
   try {
-    // 🟩 Step 1: Check .env admin credentials
+    // Check .env admin credentials
     if (
       username === process.env.ADMIN_USERNAME &&
       password === process.env.ADMIN_PASSWORD
@@ -29,23 +27,21 @@ router.post("/login", async (req, res) => {
       return res.json({ message: "✅ Login successful", token });
     }
 
-    // 🟦 Step 2: Check MySQL database for registered admins
-    const [rows] = await db.query("SELECT * FROM admins WHERE username = ?", [
-      username,
-    ]);
+    // Check database
+    const [rows] = await db.query(
+      "SELECT * FROM admins WHERE username = ?",
+      [username]
+    );
 
-    if (rows.length === 0) {
+    if (!rows.length)
       return res.status(401).json({ error: "❌ Invalid username or password" });
-    }
 
     const admin = rows[0];
     const validPassword = await bcrypt.compare(password, admin.password);
 
-    if (!validPassword) {
+    if (!validPassword)
       return res.status(401).json({ error: "❌ Invalid username or password" });
-    }
 
-    // ✅ Generate token for database admin
     const token = jwt.sign(
       { id: admin.id, username: admin.username, role: "admin" },
       process.env.JWT_SECRET,
@@ -59,29 +55,22 @@ router.post("/login", async (req, res) => {
   }
 });
 
-/**
- * 🆕 SIGNUP ROUTE
- * Adds a new admin to the database (with hashed password)
- */
+// ------------------ SIGNUP ------------------
 router.post("/signup", async (req, res) => {
   const { username, password, email } = req.body;
 
-  if (!username || !password || !email) {
+  if (!username || !password || !email)
     return res.status(400).json({ error: "⚠️ All fields are required" });
-  }
 
   try {
-    // Check if user already exists
     const [existing] = await db.query(
       "SELECT * FROM admins WHERE username = ? OR email = ?",
       [username, email]
     );
 
-    if (existing.length > 0) {
+    if (existing.length > 0)
       return res.status(400).json({ error: "⚠️ User already exists!" });
-    }
 
-    // Hash password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await db.query(
