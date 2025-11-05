@@ -7,28 +7,28 @@ const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT } = process.env;
 
 async function initDB() {
   try {
-    // ✅ Step 1️⃣: Create a connection pool
+    // 1️⃣ Create a connection pool
     const db = mysql.createPool({
       host: DB_HOST,
       user: DB_USER,
       password: DB_PASSWORD,
       database: DB_NAME,
-      port: DB_PORT || 3306,
+      port: DB_PORT ? Number(DB_PORT) : 3306,
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
-      connectTimeout: 20000, // prevent Render timeout issues
+      connectTimeout: 20000,
       ssl: {
-        rejectUnauthorized: false, // ✅ Needed for Render, PlanetScale, or remote MySQL
+        rejectUnauthorized: false, // Needed for remote MySQL (Render, PlanetScale)
       },
     });
 
-    // ✅ Step 2️⃣: Test initial connection
+    // 2️⃣ Test connection
     const connection = await db.getConnection();
     console.log("✅ MySQL Connected Successfully!");
     connection.release();
 
-    // ✅ Step 3️⃣: Create tables if not exist
+    // 3️⃣ Create tables if not exist
     await db.query(`
       CREATE TABLE IF NOT EXISTS auth (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -75,6 +75,6 @@ async function initDB() {
   }
 }
 
-// ✅ Step 4️⃣: Initialize DB and export
-const db = await initDB();
-export default db;
+// ✅ Export a promise for the pool
+const dbPromise = initDB();
+export default dbPromise;
