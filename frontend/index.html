@@ -716,18 +716,20 @@
 <script>
 document.getElementById("year").textContent = new Date().getFullYear();
 
-// ===== MENU DROPDOWN =====
+/* ================= MENU DROPDOWN ================= */
 const menuIcon = document.getElementById("menuIcon");
 const dropdownMenu = document.getElementById("dropdownMenu");
 
-menuIcon.addEventListener("click", () => dropdownMenu.classList.toggle("show"));
-window.addEventListener("click", (e) => {
-  if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
-    dropdownMenu.classList.remove("show");
-  }
-});
+if (menuIcon && dropdownMenu) {
+  menuIcon.addEventListener("click", () => dropdownMenu.classList.toggle("show"));
+  window.addEventListener("click", (e) => {
+    if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
+      dropdownMenu.classList.remove("show");
+    }
+  });
+}
 
-// ===== HERO SLIDER =====
+/* ================= HERO SLIDER ================= */
 const slides = document.querySelectorAll(".hero-slide");
 const dots = document.querySelectorAll(".dot");
 let index = 0;
@@ -742,48 +744,43 @@ function nextSlide() {
   index = (index + 1) % slides.length;
   showSlide(index);
 }
-dots.forEach((dot, i) =>
-  dot.addEventListener("click", () => {
-    index = i;
-    showSlide(index);
-  })
-);
-setInterval(nextSlide, 8000); // every 8 seconds
+dots.forEach((dot, i) => dot.addEventListener("click", () => {
+  index = i;
+  showSlide(index);
+}));
+setInterval(nextSlide, 8000);
 
-// ===== SEARCH BOX =====
+/* ================= SEARCH BOX ================= */
 const searchBtn = document.getElementById("searchBtn");
 const searchBox = document.getElementById("searchBox");
 const searchInput = document.getElementById("searchInput");
 
-searchBtn.addEventListener("click", (e) => {
-  if (!searchBox.classList.contains("active")) {
-    e.preventDefault();
-    searchBox.classList.add("active");
-    searchInput.focus();
-    return;
-  }
-  searchCard();
-});
+if (searchBtn && searchBox && searchInput) {
+  searchBtn.addEventListener("click", (e) => {
+    if (!searchBox.classList.contains("active")) {
+      e.preventDefault();
+      searchBox.classList.add("active");
+      searchInput.focus();
+      return;
+    }
+    searchCard();
+  });
+}
 
 async function searchCard() {
   const input = searchInput.value.trim();
   if (!input) return;
 
   try {
-    const res = await fetch(
-      `https://idcard-w.onrender.com/api/cards/search?q=${encodeURIComponent(input)}`
-    );
+    const res = await fetch(`https://idcard-w.onrender.com/api/cards/search?q=${encodeURIComponent(input)}`);
     if (!res.ok) throw new Error("Network error");
     const cards = await res.json();
 
     if (!cards.length) return alert("❌ Card not found!");
 
-    const cardHTML = cards
-      .map(
-        (p) => `
+    const cardHTML = cards.map(p => `
       <div class="card-container" style="display:flex;justify-content:center;margin-bottom:25px;">
         <div class="id-card" onclick="this.classList.toggle('flipped')">
-          <!-- FRONT -->
           <div class="card-face front">
             <img class="corner-logo" src="/img/National_Thermal_Power_logo.svg.png" alt="Logo" />
             <img class="profile-img" src="https://idcard-w.onrender.com${p.photo}" alt="Profile Photo" />
@@ -795,63 +792,46 @@ async function searchCard() {
               <p><strong>Phone:</strong> ${p.phone}</p>
             </div>
           </div>
-
-          <!-- BACK -->
           <div class="card-face back">
-            <h3>${p.company || "NTPC Limited."}</h3>
-            <br />
+            <h3>${p.company || "NTPC Limited."}</h3><br />
             <h3>Employee Skills</h3>
-            <p><strong>Primary Skills:</strong> ${
-              p.skills || "Technical Maintenance, Power Systems"
-            }</p>
+            <p><strong>Primary Skills:</strong> ${p.skills || "Technical Maintenance, Power Systems"}</p>
             <hr style="margin:10px 0;border:none;border-top:1px solid #ddd;">
             <h3>Terms & Conditions</h3>
-            <p class="note">• This ID card is property of NTPC Ltd.<br>
-            • Misuse or unauthorized duplication is prohibited.<br>
-            • Please return if found to the HR Department.</p>
+            <p class="note">• This ID card is property of NTPC Ltd.<br>• Misuse or unauthorized duplication is prohibited.<br>• Please return if found to the HR Department.</p>
           </div>
         </div>
-      </div>`
-      )
-      .join("");          
+      </div>`).join("");
 
-    // ===== POPUP CLOSE =====
-    document.getElementById("closePopup").addEventListener("click", () => {
-      document.getElementById("popupModal").style.display = "none";
-    });
-
-    // Close popup on clicking outside
-    document.getElementById("popupModal").addEventListener("click", (e) => {
-      if (e.target.id === "popupModal") {
-        document.getElementById("popupModal").style.display = "none";
-      }
-    });
-
-    // Put result inside popup
     document.getElementById("popupContent").innerHTML = `
       <div class="main-heading"><h1>Employee Details</h1></div>
       <div class="cards-wrapper">${cardHTML}</div>`;
 
-    // Show popup
-    document.getElementById("popupModal").style.display = "flex";
+    const popup = document.getElementById("popupModal");
+    popup.style.display = "flex";
+
+    document.getElementById("closePopup").addEventListener("click", () => popup.style.display = "none");
+    popup.addEventListener("click", (e) => {
+      if (e.target.id === "popupModal") popup.style.display = "none";
+    });
+
   } catch (err) {
     console.error(err);
     alert("⚠️ Error fetching card details!");
   }
 }
 
-// ===== EMPLOYEE COUNT FETCH & ANIMATION =====
+/* ================= EMPLOYEE COUNT ================= */
 async function loadEmployeeCount() {
   try {
     const res = await fetch("https://idcard-w.onrender.com/api/cards/count");
-    if (!res.ok) throw new Error("Network response failed");
+    if (!res.ok) throw new Error("Network error");
     const data = await res.json();
     animateCount(data.total || 0);
   } catch (err) {
     console.error("Error fetching employee count:", err);
   }
 }
-
 function animateCount(target) {
   const el = document.getElementById("employeeCount");
   if (!el) return;
@@ -868,77 +848,40 @@ function animateCount(target) {
   }, stepTime);
 }
 
-// ===== LATEST UPDATES SECTION =====
+/* ================= UPDATES ================= */
 async function loadUpdates() {
   const container = document.getElementById("updatesContainer");
   if (!container) return;
-
   try {
-    const res = await fetch("https://idcard-w.onrender.com/api/updates/all", {
-      headers: {
-        Authorization: localStorage.getItem("token")
-          ? `Bearer ${localStorage.getItem("token")}`
-          : "",
-      },
-    });
-
-    if (res.status === 403 || res.status === 401) {
-      container.innerHTML = "<p>⚠️ Please log in to see updates.</p>";
-      return;
-    }
-
+    const res = await fetch("https://idcard-w.onrender.com/api/updates/all");
     const updates = await res.json();
-    if (!res.ok || updates.length === 0) {
+
+    if (!res.ok || !updates.length) {
       container.innerHTML = "<p>No updates available.</p>";
       return;
     }
 
-    container.innerHTML = updates
-      .map(
-        (u) => `
-      <div style="
-        background:white;
-        color:#003366;
-        border-radius:10px;
-        padding:15px;
-        width:280px;
-        box-shadow:0 4px 10px rgba(0,0,0,0.1);
-        text-align:left;
-      ">
+    container.innerHTML = updates.map(u => `
+      <div style="background:white;color:#003366;border-radius:10px;padding:15px;width:280px;box-shadow:0 4px 10px rgba(0,0,0,0.1);">
         <h4 style="color:#007bff;">${u.title}</h4>
         <p>${u.description}</p>
-        ${
-          u.link
-            ? `<p><a href="${u.link}" target="_blank" style="color:#007bff;text-decoration:none;">🔗 Read more</a></p>`
-            : ""
-        }
-        <small style="color:gray;">${new Date(
-          u.created_at
-        ).toLocaleString()}</small>
-      </div>`
-      )
-      .join("");
+        ${u.link ? `<p><a href="${u.link}" target="_blank" style="color:#007bff;text-decoration:none;">🔗 Read more</a></p>` : ""}
+        <small style="color:gray;">${new Date(u.created_at).toLocaleString()}</small>
+      </div>`).join("");
   } catch (err) {
     console.error(err);
     container.innerHTML = "<p>⚠️ Failed to load updates.</p>";
   }
 }
 
-
-  // ===== CONTACT FORM MESSAGE SUBMIT =====
+/* ================= CONTACT FORM ================= */
 const contactForm = document.getElementById("contactForm");
 if (contactForm) {
   contactForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-
     const formData = new FormData(contactForm);
-
     try {
-      const res = await fetch("https://idcard-w.onrender.com/messages", {
-        method: "POST",
-        body: formData,
-      });
-
+      const res = await fetch("https://idcard-w.onrender.com/messages", { method: "POST", body: formData });
       const data = await res.json();
       if (res.ok && data.success) {
         alert("✅ Message sent successfully!");
@@ -953,12 +896,12 @@ if (contactForm) {
   });
 }
 
-// ====== ADMIN MESSAGES FETCH ======
+/* ================= ADMIN MESSAGE TABLE ================= */
 async function refreshMessages() {
-  const table = document.getElementById("messageTable")?.querySelector("tbody");
-  if (!table) return; // not on admin page
-
+  const table = document.querySelector("#messageTable tbody");
+  if (!table) return;
   table.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
+
   try {
     const res = await fetch("https://idcard-w.onrender.com/messages");
     const messages = await res.json();
@@ -968,38 +911,46 @@ async function refreshMessages() {
       return;
     }
 
-    table.innerHTML = messages
-      .map(
-        (msg, i) => `
-        <tr>
-          <td>${i + 1}</td>
-          <td>${msg.name}</td>
-          <td>${msg.email}</td>
-          <td>${msg.message}</td>
-          <td>${
-            msg.image
-              ? `<img src="https://idcard-w.onrender.com/uploads/messages/${msg.image}" width="80">`
-              : "—"
-          }</td>
-          <td>${new Date(msg.created_at).toLocaleString()}</td>
-        </tr>`
-      )
-      .join("");
+    table.innerHTML = messages.map((msg, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${msg.name}</td>
+        <td>${msg.email}</td>
+        <td>${msg.message}</td>
+        <td>${msg.image ? `<img src="https://idcard-w.onrender.com/uploads/messages/${msg.image}" width="80">` : "—"}</td>
+        <td>${new Date(msg.created_at).toLocaleString()}</td>
+      </tr>`).join("");
+
   } catch (err) {
     console.error("Error loading messages:", err);
-    table.innerHTML =
-      "<tr><td colspan='6'>⚠️ Failed to load messages.</td></tr>";
+    table.innerHTML = "<tr><td colspan='6'>⚠️ Failed to load messages.</td></tr>";
   }
 }
 
-// ===== INITIAL LOAD =====
+/* ================= FETCH ALL CARDS (SAFE) ================= */
+async function fetchAllCards() {
+  const container = document.getElementById("cardsContainer");
+  if (!container) return; // Not on the cards page
+  try {
+    const res = await fetch("https://idcard-w.onrender.com/api/cards/all");
+    const cards = await res.json();
+    container.innerHTML = cards.length
+      ? cards.map(c => `<div>${c.name}</div>`).join("")
+      : "<p>No cards found.</p>";
+  } catch (err) {
+    console.error("Error loading all cards:", err);
+  }
+}
+
+/* ================= INITIALIZE ================= */
 window.addEventListener("load", () => {
   loadEmployeeCount();
   loadUpdates();
-  fetchAllCards(); // show all cards (make sure this function exists)
-  refreshMessages(); // only runs if #messageTable exists
+  fetchAllCards();
+  refreshMessages();
 });
 </script>
+
 
 <!-- ===== POPUP MODAL ===== -->
 <div id="popupModal" style="
