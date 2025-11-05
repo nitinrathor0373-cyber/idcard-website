@@ -52,6 +52,20 @@ async function initDB() {
       )
     `);
 
+
+
+     await db.query(`
+       CREATE TABLE IF NOT EXISTS messages (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  message TEXT NOT NULL,
+  image VARCHAR(255),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+    `);
+
+
     console.log("🧩 Tables checked/created successfully!");
     return db;
 
