@@ -8,6 +8,7 @@ import multer from "multer";
 import db from "./db.js";
 import authRoutes from "./routes/auth.js";
 import cardRoutes from "./routes/card.js";
+import contactRoutes from "./routes/contact.js";
 import updatesRoutes from "./routes/updates.js";
 
 // ==================== CONFIG ====================
@@ -30,6 +31,7 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/messages", contactRoutes);
 
 // ✅ Ensure upload directory exists
 const uploadDir = path.join(process.cwd(), "uploads");
@@ -60,6 +62,9 @@ app.use("/api/cards", cardRoutes);
 
 // 📰 Latest Updates CRUD
 app.use("/api/updates", updatesRoutes);
+
+app.use("/uploads/messages", express.static("uploads/messages"));
+
 
 // ===== 📩 CONTACT FORM ROUTES =====
 
