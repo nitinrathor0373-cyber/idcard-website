@@ -23,7 +23,7 @@ app.use(
     origin: [
       "http://localhost:5000",      // local backend (if testing locally)
       "http://localhost:5500",      // local frontend testing (VS Code Live Server)
-      "https://mtp-tech.onrender.com" // ✅ your Render frontend URL
+      "https://mtpdepartmentid.onrender.com" // ✅ your Render frontend URL
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
