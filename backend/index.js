@@ -16,12 +16,12 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 
 // ==================== MIDDLEWARE ====================
+// ✅ Allow access from your frontend (Netlify / Vercel / localhost)
 app.use(
   cors({
     origin: [
-      "http://localhost:3000", // local frontend
-      "https://your-frontend-name.netlify.app", // your Netlify frontend URL
-      "https://your-frontend-name.vercel.app", // or Vercel frontend URL
+      "http://localhost:5000", // for local testing
+      "https://mtp-tech.onrender.com", // ✅ your frontend Netlify domain (change if needed)
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
@@ -122,7 +122,8 @@ app.use((err, req, res, next) => {
     console.error("❌ MySQL Connection Failed:", err);
   }
 
- app.listen(process.env.PORT || 10000, "0.0.0.0", () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+  // ✅ Important: Use 0.0.0.0 for Render, not localhost
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
 })();
