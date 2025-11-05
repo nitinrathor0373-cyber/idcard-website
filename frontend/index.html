@@ -918,13 +918,81 @@ async function loadUpdates() {
   }
 }
 
+
+  // ===== CONTACT FORM MESSAGE SUBMIT =====
+const contactForm = document.getElementById("contactForm");
+if (contactForm) {
+  contactForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(contactForm);
+
+    try {
+      const res = await fetch("https://idcard-w.onrender.com/messages", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        alert("✅ Message sent successfully!");
+        contactForm.reset();
+      } else {
+        alert("⚠️ Failed to send message. Try again later.");
+      }
+    } catch (err) {
+      console.error("Message submit error:", err);
+      alert("❌ Error sending message!");
+    }
+  });
+}
+
+// ====== ADMIN MESSAGES FETCH ======
+async function refreshMessages() {
+  const table = document.getElementById("messageTable")?.querySelector("tbody");
+  if (!table) return; // not on admin page
+
+  table.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
+  try {
+    const res = await fetch("https://idcard-w.onrender.com/messages");
+    const messages = await res.json();
+
+    if (!messages.length) {
+      table.innerHTML = "<tr><td colspan='6'>No messages found.</td></tr>";
+      return;
+    }
+
+    table.innerHTML = messages
+      .map(
+        (msg, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${msg.name}</td>
+          <td>${msg.email}</td>
+          <td>${msg.message}</td>
+          <td>${
+            msg.image
+              ? `<img src="https://idcard-w.onrender.com/uploads/messages/${msg.image}" width="80">`
+              : "—"
+          }</td>
+          <td>${new Date(msg.created_at).toLocaleString()}</td>
+        </tr>`
+      )
+      .join("");
+  } catch (err) {
+    console.error("Error loading messages:", err);
+    table.innerHTML =
+      "<tr><td colspan='6'>⚠️ Failed to load messages.</td></tr>";
+  }
+}
+
 // ===== INITIAL LOAD =====
 window.addEventListener("load", () => {
   loadEmployeeCount();
   loadUpdates();
   fetchAllCards(); // show all cards (make sure this function exists)
+  refreshMessages(); // only runs if #messageTable exists
 });
-</script>
 
 
 <!-- ===== POPUP MODAL ===== -->
