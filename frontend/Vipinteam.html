@@ -666,7 +666,7 @@ async function refreshMessages() {
   table.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
 
   try {
-    const res = await fetch(`${API_BASE}/messages`);
+    const res = await fetch(`${API_BASE}/Message`);
     if (!res.ok) {
       table.innerHTML = "<tr><td colspan='6'>⚠️ Failed to fetch messages.</td></tr>";
       return;
