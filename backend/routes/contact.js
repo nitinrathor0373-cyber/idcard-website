@@ -1,16 +1,16 @@
 import express from "express";
 import db from "../db.js";
-import { uploadMessage, cloudinary } from "../cloudinaryConfig.js"; // ✅ Use the dedicated Cloudinary uploader
+import { uploadMessage } from "../cloudinaryConfig.js"; // You can rename this to a local multer if not using Cloudinary
 
 const router = express.Router();
 
 /* ===========================================================
-   🟩 POST MESSAGE (with Cloudinary Image Upload)
+   🟩 POST MESSAGE (with uploaded image)
 =========================================================== */
 router.post("/", uploadMessage.single("image"), async (req, res) => {
   try {
     const { name, email, message } = req.body;
-    const image = req.file ? req.file.path : null; // Cloudinary auto-generates full URL
+    const image = req.file?.path || null; // Use local file path
 
     if (!name || !email || !message) {
       return res.status(400).json({
@@ -49,38 +49,23 @@ router.get("/", async (req, res) => {
 });
 
 /* ===========================================================
-   🟩 DELETE MESSAGE (and remove image from Cloudinary)
+   🟩 DELETE MESSAGE
 =========================================================== */
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Fetch the image URL
+    // Fetch the image path (optional, in case you want to delete local files)
     const [rows] = await db.query("SELECT image FROM messages WHERE id = ?", [id]);
-    if (rows.length === 0) {
-      return res.status(404).json({ error: "Message not found" });
-    }
+    if (!rows.length) return res.status(404).json({ error: "Message not found" });
 
-    const imageUrl = rows[0].image;
+    // Optional: delete local file
+    // const fs = require('fs');
+    // if (rows[0].image) fs.unlinkSync(rows[0].image);
 
     // Delete DB record
     const [result] = await db.query("DELETE FROM messages WHERE id = ?", [id]);
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "Failed to delete message" });
-    }
-
-    // Delete from Cloudinary if image exists
-    if (imageUrl && imageUrl.includes("cloudinary.com")) {
-      // Extract public_id safely
-      const urlParts = imageUrl.split("/");
-      const folderIndex = urlParts.findIndex(p => p.toLowerCase() === "message" || p.toLowerCase() === "messages");
-      if (folderIndex !== -1) {
-        const publicIdWithExt = urlParts.slice(folderIndex + 1).join("/"); // e.g., 12345_image.jpg
-        const publicId = urlParts[folderIndex] + "/" + publicIdWithExt.split(".")[0]; // messages/12345_image
-        await cloudinary.uploader.destroy(publicId);
-        console.log("🗑️ Deleted Cloudinary image:", publicId);
-      }
-    }
+    if (result.affectedRows === 0) return res.status(404).json({ error: "Failed to delete message" });
 
     res.json({ success: true, msg: "Message deleted successfully" });
   } catch (err) {
