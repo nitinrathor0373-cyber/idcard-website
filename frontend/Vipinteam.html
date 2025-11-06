@@ -472,7 +472,7 @@ button[type="submit"]:hover {
         <input type="text" name="name" required>
         <label>Employee ID</label>
         <input  type="number" name="empId" required min="1" step="1" placeholder="Enter Employee ID">
-        <label>Position</label>
+        <label>Department</label>
         <input type="text" name="position" required>
         <label>Gender</label>
         <select name="gender" required>
@@ -634,6 +634,7 @@ button[type="submit"]:hover {
           <td>${c.name}</td>
           <td>${c.empId}</td>
           <td>${c.position}</td>
+          <td>${c.company}</td>
           <td>${c.email}</td>
           <td>${c.phone}</td>
           <td><button class="delete-btn" onclick="deleteCard(${c.id})">🗑 Delete</button></td>
