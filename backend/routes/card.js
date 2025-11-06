@@ -12,7 +12,7 @@ router.post("/add", uploadCard.single("photo"), async (req, res) => {
     const { name, empId, position, gender, phone, email, company, skills } = req.body;
 
     // Get Cloudinary URL from multer upload
-    const photoUrl = req.file ? req.file.path : null;
+    const photoUrl = req.file?.path || null;
 
     // Validate required fields
     if (!name || !empId || !position || !gender || !phone || !email || !company) {
@@ -24,7 +24,6 @@ router.post("/add", uploadCard.single("photo"), async (req, res) => {
       (name, empId, position, gender, phone, email, company, skills, photo)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-
     await db.query(sql, [name, empId, position, gender, phone, email, company, skills, photoUrl]);
 
     res.json({ success: true, message: "✅ Card added successfully!", photoUrl });
@@ -53,9 +52,7 @@ router.get("/all", async (req, res) => {
 router.get("/search", async (req, res) => {
   try {
     const { q } = req.query;
-    if (!q || q.trim() === "") {
-      return res.status(400).json({ error: "Search query is required" });
-    }
+    if (!q?.trim()) return res.status(400).json({ error: "Search query is required" });
 
     const searchTerm = `%${q}%`;
     const [rows] = await db.query(
@@ -63,9 +60,7 @@ router.get("/search", async (req, res) => {
       [searchTerm, searchTerm]
     );
 
-    if (rows.length === 0) {
-      return res.status(404).json({ error: "No records found" });
-    }
+    if (!rows.length) return res.status(404).json({ error: "No records found" });
 
     res.json(rows);
   } catch (err) {
@@ -75,35 +70,30 @@ router.get("/search", async (req, res) => {
 });
 
 /* ===========================================================
-   🟩 4. Delete Card by ID (and Remove from Cloudinary)
+   🟩 4. Delete Card by ID (and remove from Cloudinary)
 =========================================================== */
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Get the Cloudinary image URL
+    // 1️⃣ Get the Cloudinary image URL
     const [rows] = await db.query("SELECT photo FROM cards WHERE id = ?", [id]);
-    if (rows.length === 0) {
-      return res.status(404).json({ error: "Card not found" });
-    }
+    if (!rows.length) return res.status(404).json({ error: "Card not found" });
 
     const photoUrl = rows[0].photo;
 
-    // Delete from database
+    // 2️⃣ Delete DB record
     const [result] = await db.query("DELETE FROM cards WHERE id = ?", [id]);
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "Failed to delete card" });
-    }
+    if (result.affectedRows === 0) return res.status(404).json({ error: "Failed to delete card" });
 
-    // Delete image from Cloudinary if exists
-    if (photoUrl) {
+    // 3️⃣ Delete image from Cloudinary if exists
+    if (photoUrl?.includes("cloudinary.com")) {
       try {
-        // Extract public_id from URL
-        const publicId = photoUrl
-          .split("/")
-          .slice(-2) // last two parts: folder/filename.ext
-          .join("/")
-          .replace(/\.[^/.]+$/, ""); // remove extension
+        // Extract public_id from Cloudinary URL
+        const parts = photoUrl.split("/");
+        const folderIndex = parts.findIndex(p => p === "Cards") || 0;
+        const publicIdWithExt = parts.slice(folderIndex).join("/"); // e.g., Cards/filename.jpg
+        const publicId = publicIdWithExt.replace(/\.[^/.]+$/, ""); // remove extension
 
         await cloudinary.uploader.destroy(publicId);
         console.log("🗑️ Deleted Cloudinary image:", publicId);
@@ -128,7 +118,7 @@ router.get("/count", async (req, res) => {
     res.json({ total: rows[0].total });
   } catch (err) {
     console.error("❌ Error counting cards:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ error: "Server error" });
   }
 });
 
