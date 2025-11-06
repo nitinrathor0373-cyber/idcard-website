@@ -398,6 +398,16 @@ button[type="submit"]:hover {
     font-size: 1.1rem;
   }
 }
+
+td img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #007bff33;
+}
+
+
 </style>
 
 
@@ -633,7 +643,7 @@ button[type="submit"]:hover {
 
       tableBody.innerHTML = cards.map(c => `
         <tr>
-          <td><img src="${API_BASE}${c.photo.startsWith('/') ? c.photo : '/' + c.photo}" alt="Photo" width="70"></td>
+          <td><img src="https://idcard-w.onrender.com${c.photo.startsWith('/') ? c.photo : '/' + c.photo}" alt="Photo"></td>
           <td>${c.name}</td>
           <td>${c.empId}</td>
           <td>${c.position}</td>
@@ -694,7 +704,7 @@ button[type="submit"]:hover {
           <td>${msg.name}</td>
           <td>${msg.email}</td>
           <td>${msg.message}</td>
-          <td>${msg.image ? `<img src="${API_BASE}/uploads/messages/${msg.image}" width="80" style="border-radius:6px;">` : "—"}</td>
+          <td>${msg.image ? `<img src="https://idcard-w.onrender.com/uploads/messages/${msg.image}" width="80">` : "—"}</td>
           <td>${new Date(msg.created_at).toLocaleString()}</td>
         </tr>
       `).join("");
