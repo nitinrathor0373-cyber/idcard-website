@@ -15,7 +15,7 @@ cloudinary.config({
 const messageStorage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: "messages",
+    folder: "Message",
     allowed_formats: ["jpg", "jpeg", "png", "webp"],
   },
 });
@@ -26,7 +26,7 @@ const uploadMessage = multer({ storage: messageStorage });
 const cardStorage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: "cards", // Store in a different folder
+    folder: "Cards", // Store in a different folder
     allowed_formats: ["jpg", "jpeg", "png", "webp"],
   },
 });

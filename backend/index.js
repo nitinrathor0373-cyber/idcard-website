@@ -19,12 +19,12 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 
 // ==================== MIDDLEWARE ====================
-// ✅ Allow access from your frontend (Netlify / Vercel / localhost)
 app.use(
   cors({
     origin: [
-      "http://localhost:5000", // for local testing
-      "https://mtp-tech.onrender.com", // ✅ your frontend Netlify domain (change if needed)
+      "http://localhost:5000",
+      "http://localhost:3000",
+      "https://mtp-tech.onrender.com",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
@@ -33,14 +33,16 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use("/messages", contactRoutes);
 
-// ✅ Ensure upload directory exists
+// ==================== UPLOAD PATH ====================
 const uploadDir = path.join(process.cwd(), "uploads");
+const messageUploadPath = path.join(uploadDir, "messages");
+
+// ✅ Ensure directories exist
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 if (!fs.existsSync(messageUploadPath)) fs.mkdirSync(messageUploadPath, { recursive: true });
 
-// ✅ Serve uploaded photos (for ID cards & contact images)
+// ✅ Serve uploaded files
 app.use("/uploads", express.static(uploadDir));
 
 // ==================== MULTER CONFIG ====================
@@ -55,18 +57,16 @@ const upload = multer({ storage });
 // 🔐 Admin Authentication
 app.use("/api/auth", authRoutes);
 
-// 🆔 ID Cards CRUD (uses Cloudinary or local upload inside cardRoutes)
+// 🆔 ID Cards CRUD
 app.use("/api/cards", cardRoutes);
 
 // 📰 Latest Updates CRUD
 app.use("/api/updates", updatesRoutes);
 
-app.use("/uploads/messages", express.static("uploads/messages"));
+// 📩 Contact form routes
+app.use("/messages", contactRoutes);
 
-
-// ===== 📩 CONTACT FORM ROUTES =====
-
-// ➕ POST /contact — Save a new message
+// Optional: local POST/GET for messages if not using contactRoutes
 app.post("/contact", upload.single("image"), async (req, res) => {
   const { name, email, message } = req.body;
   const image = req.file ? `uploads/messages/${req.file.filename}` : null;
@@ -76,24 +76,22 @@ app.post("/contact", upload.single("image"), async (req, res) => {
   }
 
   try {
-    // ✅ Use correct table name from db.js ("messages" not "contact_messages")
     const sql = `
-      INSERT INTO messages (name, email, message, image)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO messages (name, email, message, image, created_at)
+      VALUES (?, ?, ?, ?, NOW())
     `;
     await db.query(sql, [name, email, message, image]);
-    res.status(200).json({ success: true, message: "✅ Message saved successfully!" });
+    res.status(200).json({ success: true, message: "✅ Message saved successfully!", image });
   } catch (err) {
     console.error("❌ Error saving message:", err);
     res.status(500).json({ error: "Database error" });
   }
 });
 
-// 📜 GET /messages — Fetch all contact messages
 app.get("/messages", async (req, res) => {
   try {
     const [results] = await db.query(`
-      SELECT * FROM contact_messages
+      SELECT * FROM messages
       ORDER BY created_at DESC
     `);
     res.json(results);
@@ -104,12 +102,8 @@ app.get("/messages", async (req, res) => {
 });
 
 // ==================== DEFAULT & ERROR HANDLERS ====================
-app.get("/", (req, res) => {
-  res.send("✅ ID Card Backend is running successfully!");
-});
-
+app.get("/", (req, res) => res.send("✅ ID Card Backend is running successfully!"));
 app.use((req, res) => res.status(404).json({ error: "Route not found" }));
-
 app.use((err, req, res, next) => {
   console.error("🔥 Server Error:", err);
   res.status(500).json({ error: "Internal Server Error" });
@@ -124,8 +118,7 @@ app.use((err, req, res, next) => {
     console.error("❌ MySQL Connection Failed:", err);
   }
 
-  // ✅ Important: Use 0.0.0.0 for Render, not localhost
-app.listen(process.env.PORT || "0.0.0.0", () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
 })();

@@ -1,13 +1,13 @@
 import express from "express";
 import db from "../db.js";
-import { upload, cloudinary } from "../cloudinaryConfig.js"; // ✅ Cloudinary setup
+import { uploadCard, cloudinary } from "../cloudinaryConfig.js"; // ✅ Cloudinary setup
 
 const router = express.Router();
 
 /* ===========================================================
    🟩 1. Add New ID Card (Upload photo to Cloudinary)
 =========================================================== */
-router.post("/add", upload.single("photo"), async (req, res) => {
+router.post("/add", uploadCard.single("photo"), async (req, res) => {
   try {
     const { name, empId, position, gender, phone, email, company, skills } = req.body;
 
