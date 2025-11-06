@@ -280,7 +280,7 @@
 </div>
 
   <!-- ===== Backend Script ===== -->
-      <script>
+  <script>
   // ===== Year in Footer =====
   document.getElementById("year").textContent = new Date().getFullYear();
 
@@ -316,7 +316,7 @@
       return;
     }
 
-    // ✅ Gmail-only validation
+    // Gmail-only validation
     if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
       alert("⚠️ Only Gmail addresses are allowed (e.g., example@gmail.com).");
       return;
@@ -328,20 +328,16 @@
     formData.append("message", message);
     if (image) formData.append("image", image);
 
-    // ✅ Automatically detect backend URL
     const backendURL =
       window.location.hostname === "localhost"
-        ? "http://localhost:5000" // Local backend
-        : "https://mtpdepartment.onrender.com"; // 🔁 Replace with your Render backend URL
+        ? "http://localhost:5000"
+        : "https://mtpdepartment.onrender.com"; // Replace with your backend URL
 
     try {
       loadingOverlay.style.display = "flex"; // Show loading
       await new Promise(resolve => setTimeout(resolve, 1200)); // smooth delay
 
-      const res = await fetch(`${backendURL}/messages`, { // match your backend route
-  method: "POST",
-  body: formData
-});
+      const res = await fetch(`${backendURL}/messages`, { method: "POST", body: formData });
 
       await new Promise(resolve => setTimeout(resolve, 500)); // smooth finish
       loadingOverlay.style.display = "none";
