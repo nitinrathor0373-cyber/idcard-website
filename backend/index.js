@@ -43,7 +43,7 @@ if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 if (!fs.existsSync(messageUploadPath)) fs.mkdirSync(messageUploadPath, { recursive: true });
 
 // ✅ Serve uploaded files
-app.use("/uploads", express.static(uploadDir));
+app.use("/Upload", express.static(uploadDir));
 
 // ==================== MULTER CONFIG ====================
 const storage = multer.diskStorage({
@@ -69,7 +69,7 @@ app.use("/messages", contactRoutes);
 // Optional: local POST/GET for messages if not using contactRoutes
 app.post("/contact", upload.single("image"), async (req, res) => {
   const { name, email, message } = req.body;
-  const image = req.file ? `uploads/messages/${req.file.filename}` : null;
+  const image = req.file ? `Upload/Message/${req.file.filename}` : null;
 
   if (!name || !email || !message) {
     return res.status(400).json({ error: "All fields are required" });
@@ -88,7 +88,7 @@ app.post("/contact", upload.single("image"), async (req, res) => {
   }
 });
 
-app.get("/messages", async (req, res) => {
+app.get("/Message", async (req, res) => {
   try {
     const [results] = await db.query(`
       SELECT * FROM messages
