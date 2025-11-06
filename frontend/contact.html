@@ -338,10 +338,10 @@
       loadingOverlay.style.display = "flex"; // Show loading
       await new Promise(resolve => setTimeout(resolve, 1200)); // smooth delay
 
-      const res = await fetch(`${backendURL}/contact`, {
-        method: "POST",
-        body: formData,
-      });
+      const res = await fetch(`${backendURL}/messages`, { // match your backend route
+  method: "POST",
+  body: formData
+});
 
       await new Promise(resolve => setTimeout(resolve, 500)); // smooth finish
       loadingOverlay.style.display = "none";
