@@ -705,16 +705,15 @@
 </div>
 
 <script>
-const API_BASE = "https://mtpdepartment.onrender.com";
-
 document.getElementById("year").textContent = new Date().getFullYear();
 
 /* ================= MENU DROPDOWN ================= */
 const menuIcon = document.getElementById("menuIcon");
 const dropdownMenu = document.getElementById("dropdownMenu");
+
 if (menuIcon && dropdownMenu) {
   menuIcon.addEventListener("click", () => dropdownMenu.classList.toggle("show"));
-  window.addEventListener("click", e => {
+  window.addEventListener("click", (e) => {
     if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
       dropdownMenu.classList.remove("show");
     }
@@ -725,14 +724,21 @@ if (menuIcon && dropdownMenu) {
 const slides = document.querySelectorAll(".hero-slide");
 const dots = document.querySelectorAll(".dot");
 let index = 0;
+
 function showSlide(i) {
-  slides.forEach((s,n) => {
-    s.classList.toggle("active", n===i);
-    dots[n].classList.toggle("active", n===i);
+  slides.forEach((s, n) => {
+    s.classList.toggle("active", n === i);
+    dots[n].classList.toggle("active", n === i);
   });
 }
-function nextSlide() { index = (index+1)%slides.length; showSlide(index); }
-dots.forEach((dot,i) => dot.addEventListener("click", () => { index=i; showSlide(index); }));
+function nextSlide() {
+  index = (index + 1) % slides.length;
+  showSlide(index);
+}
+dots.forEach((dot, i) => dot.addEventListener("click", () => {
+  index = i;
+  showSlide(index);
+}));
 setInterval(nextSlide, 8000);
 
 /* ================= SEARCH BOX ================= */
@@ -741,7 +747,7 @@ const searchBox = document.getElementById("searchBox");
 const searchInput = document.getElementById("searchInput");
 
 if (searchBtn && searchBox && searchInput) {
-  searchBtn.addEventListener("click", e => {
+  searchBtn.addEventListener("click", (e) => {
     if (!searchBox.classList.contains("active")) {
       e.preventDefault();
       searchBox.classList.add("active");
@@ -757,7 +763,7 @@ async function searchCard() {
   if (!input) return;
 
   try {
-    const res = await fetch(`${API_BASE}/api/cards/search?q=${encodeURIComponent(input)}`);
+    const res = await fetch(`https://mtpdepartment.onrender.com/api/cards/search?q=${encodeURIComponent(input)}`);
     if (!res.ok) throw new Error("Network error");
     const cards = await res.json();
 
@@ -768,7 +774,7 @@ async function searchCard() {
         <div class="id-card" onclick="this.classList.toggle('flipped')">
           <div class="card-face front">
             <img class="corner-logo" src="/img/National_Thermal_Power_logo.svg.png" alt="Logo" />
-            <img class="profile-img" src="${p.photo || ''}" alt="Profile Photo" />
+            <img class="profile-img" src="https://mtpdepartment.onrender.com${p.photo}" alt="Profile Photo" />
             <div class="info-side">
               <h2>${p.name}</h2>
               <p><strong>ID No:</strong> ${p.empId}</p>
@@ -778,7 +784,7 @@ async function searchCard() {
             </div>
           </div>
           <div class="card-face back">
-            <p><strong>Department:</strong> ${p.company}</p>
+           <p><strong>Department:</strong> ${p.company}</p>
             <h3>Employee Skills</h3>
             <p><strong>Primary Skills:</strong> ${p.skills || "Technical Maintenance, Power Systems"}</p>
             <hr style="margin:10px 0;border:none;border-top:1px solid #ddd;">
@@ -786,16 +792,21 @@ async function searchCard() {
             <p class="note">• This ID card is property of NTPC Ltd.<br>• Misuse or unauthorized duplication is prohibited.<br>• Please return if found to the HR Department.</p>
           </div>
         </div>
-      </div>
-    `).join("");
+      </div>`).join("");
+
+    document.getElementById("popupContent").innerHTML = `
+      <div class="main-heading"><h1>Employee Details</h1></div>
+      <div class="cards-wrapper">${cardHTML}</div>`;
 
     const popup = document.getElementById("popupModal");
-    document.getElementById("popupContent").innerHTML = `<div class="main-heading"><h1>Employee Details</h1></div><div class="cards-wrapper">${cardHTML}</div>`;
     popup.style.display = "flex";
-    document.getElementById("closePopup").addEventListener("click", () => popup.style.display="none");
-    popup.addEventListener("click", e => { if(e.target.id==="popupModal") popup.style.display="none"; });
 
-  } catch(err) {
+    document.getElementById("closePopup").addEventListener("click", () => popup.style.display = "none");
+    popup.addEventListener("click", (e) => {
+      if (e.target.id === "popupModal") popup.style.display = "none";
+    });
+
+  } catch (err) {
     console.error(err);
     alert("⚠️ Error fetching card details!");
   }
@@ -804,102 +815,144 @@ async function searchCard() {
 /* ================= EMPLOYEE COUNT ================= */
 async function loadEmployeeCount() {
   try {
-    const res = await fetch(`${API_BASE}/api/cards/count`);
+    const res = await fetch("https://mtpdepartment.onrender.com/api/cards/count");
     if (!res.ok) throw new Error("Network error");
     const data = await res.json();
     animateCount(data.total || 0);
-  } catch(err) { console.error("Error fetching employee count:", err); }
+  } catch (err) {
+    console.error("Error fetching employee count:", err);
+  }
 }
 function animateCount(target) {
   const el = document.getElementById("employeeCount");
   if (!el) return;
-  let current=0;
-  const duration=1500;
-  const stepTime = Math.max(Math.floor(duration/(target||1)), 20);
+  let current = 0;
+  const duration = 1500;
+  const stepTime = Math.max(Math.floor(duration / (target || 1)), 20);
   const timer = setInterval(() => {
-    current += Math.ceil(target/(duration/stepTime));
-    if(current>=target){ current=target; clearInterval(timer); }
+    current += Math.ceil(target / (duration / stepTime));
+    if (current >= target) {
+      current = target;
+      clearInterval(timer);
+    }
     el.textContent = current.toLocaleString();
   }, stepTime);
 }
 
 /* ================= UPDATES ================= */
+/* ================= PUBLIC UPDATES ================= */
 async function loadUpdates() {
   const container = document.getElementById("updatesContainer");
-  if(!container) return;
+  if (!container) return;
+
   try {
-    const res = await fetch(`${API_BASE}/api/updates/all`);
-    if(!res.ok) throw new Error("Network response not ok");
+    const res = await fetch("https://mtpdepartment.onrender.com/api/updates/all");
+    if (!res.ok) throw new Error("Network response not ok");
     const updates = await res.json();
-    if(!updates.length){ container.innerHTML="<p>No updates available.</p>"; return; }
-    container.innerHTML = updates.map(u=>`
-      <div style="background:white;color:#003366;border-radius:10px;padding:15px;width:280px;box-shadow:0 4px 10px rgba(0,0,0,0.1);margin:10px;">
+
+    if (!updates.length) {
+      container.innerHTML = "<p>No updates available.</p>";
+      return;
+    }
+
+    container.innerHTML = updates.map(u => `
+      <div style="
+        background: white;
+        color: #003366;
+        border-radius: 10px;
+        padding: 15px;
+        width: 280px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        margin: 10px;
+      ">
         <h4 style="color:#007bff;">${u.title}</h4>
         <p>${u.description}</p>
-        ${u.link?`<p><a href="${u.link}" target="_blank" style="color:#007bff;text-decoration:none;">🔗 Read more</a></p>`:""}
+        ${u.link ? `<p><a href="${u.link}" target="_blank" style="color:#007bff;text-decoration:none;">🔗 Read more</a></p>` : ""}
         <small style="color:gray;">${new Date(u.created_at).toLocaleString()}</small>
       </div>
     `).join("");
-  } catch(err){ console.error("Error loading updates:",err); container.innerHTML="<p>⚠️ Failed to load updates.</p>"; }
+  } catch (err) {
+    console.error("Error loading updates:", err);
+    container.innerHTML = "<p>⚠️ Failed to load updates.</p>";
+  }
 }
 
 /* ================= CONTACT FORM ================= */
 const contactForm = document.getElementById("contactForm");
-if(contactForm){
-  contactForm.addEventListener("submit", async e=>{
+if (contactForm) {
+  contactForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(contactForm);
-    try{
-      const res = await fetch(`${API_BASE}/messages`, { method:"POST", body: formData });
+    try {
+      const res = await fetch("https://mtpdepartment.onrender.com/messages", { method: "POST", body: formData });
       const data = await res.json();
-      if(res.ok && data.success){ alert("✅ Message sent successfully!"); contactForm.reset(); }
-      else alert("⚠️ Failed to send message. Try again later.");
-    } catch(err){ console.error("Message submit error:",err); alert("❌ Error sending message!"); }
+      if (res.ok && data.success) {
+        alert("✅ Message sent successfully!");
+        contactForm.reset();
+      } else {
+        alert("⚠️ Failed to send message. Try again later.");
+      }
+    } catch (err) {
+      console.error("Message submit error:", err);
+      alert("❌ Error sending message!");
+    }
   });
 }
 
 /* ================= ADMIN MESSAGE TABLE ================= */
 async function refreshMessages() {
   const table = document.querySelector("#messageTable tbody");
-  if(!table) return;
-  table.innerHTML="<tr><td colspan='6'>Loading...</td></tr>";
-  try{
-    const res = await fetch(`${API_BASE}/messages`);
+  if (!table) return;
+  table.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
+
+  try {
+    const res = await fetch("https://mtpdepartment.onrender.com/messages");
     const messages = await res.json();
-    if(!messages.length){ table.innerHTML="<tr><td colspan='6'>No messages found.</td></tr>"; return; }
-    table.innerHTML = messages.map((msg,i)=>`
+
+    if (!messages.length) {
+      table.innerHTML = "<tr><td colspan='6'>No messages found.</td></tr>";
+      return;
+    }
+
+    table.innerHTML = messages.map((msg, i) => `
       <tr>
-        <td>${i+1}</td>
+        <td>${i + 1}</td>
         <td>${msg.name}</td>
         <td>${msg.email}</td>
         <td>${msg.message}</td>
-        <td>${msg.image || "—"}</td>
+        <td>${msg.image ? `<img src=https://mtpdepartment.onrender.com/uploads/messages/${msg.image}" width="80">` : "—"}</td>
         <td>${new Date(msg.created_at).toLocaleString()}</td>
-      </tr>
-    `).join("");
-  } catch(err){ console.error("Error loading messages:",err); table.innerHTML="<tr><td colspan='6'>⚠️ Failed to load messages.</td></tr>"; }
+      </tr>`).join("");
+
+  } catch (err) {
+    console.error("Error loading messages:", err);
+    table.innerHTML = "<tr><td colspan='6'>⚠️ Failed to load messages.</td></tr>";
+  }
 }
 
-/* ================= FETCH ALL CARDS ================= */
+/* ================= FETCH ALL CARDS (SAFE) ================= */
 async function fetchAllCards() {
   const container = document.getElementById("cardsContainer");
-  if(!container) return;
-  try{
-    const res = await fetch(`${API_BASE}/api/cards/all`);
+  if (!container) return; // Not on the cards page
+  try {
+    const res = await fetch("https://mtpdepartment.onrender.com/api/cards/all");
     const cards = await res.json();
-    container.innerHTML = cards.length ? cards.map(c=>`<div>${c.name}</div>`).join("") : "<p>No cards found.</p>";
-  } catch(err){ console.error("Error loading all cards:",err); }
+    container.innerHTML = cards.length
+      ? cards.map(c => `<div>${c.name}</div>`).join("")
+      : "<p>No cards found.</p>";
+  } catch (err) {
+    console.error("Error loading all cards:", err);
+  }
 }
 
 /* ================= INITIALIZE ================= */
-window.addEventListener("load",()=>{
+window.addEventListener("load", () => {
   loadEmployeeCount();
   loadUpdates();
   fetchAllCards();
   refreshMessages();
 });
 </script>
-
 
 
 <!-- ===== POPUP MODAL ===== -->
