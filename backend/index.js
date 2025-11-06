@@ -16,7 +16,7 @@ import updatesRoutes from "./routes/updates.js";
 // ==================== CONFIG ====================
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 5000;
 
 // ==================== MIDDLEWARE ====================
 app.use(
