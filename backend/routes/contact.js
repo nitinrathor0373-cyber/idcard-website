@@ -1,7 +1,6 @@
 import express from "express";
 import db from "../db.js";
-import { uploadMessage } from "../cloudinaryConfig.js"; // ✅ Use the dedicated Cloudinary uploader
-import { v2 as cloudinary } from "cloudinary";
+import { uploadMessage, cloudinary } from "../cloudinaryConfig.js"; // ✅ Use the dedicated Cloudinary uploader
 
 const router = express.Router();
 
@@ -11,7 +10,7 @@ const router = express.Router();
 router.post("/", uploadMessage.single("image"), async (req, res) => {
   try {
     const { name, email, message } = req.body;
-    const image = req.file ? req.file.path : null; // ✅ Cloudinary auto-generates full URL
+    const image = req.file ? req.file.path : null; // Cloudinary auto-generates full URL
 
     if (!name || !email || !message) {
       return res.status(400).json({
@@ -70,14 +69,14 @@ router.delete("/:id", async (req, res) => {
       return res.status(404).json({ error: "Failed to delete message" });
     }
 
-    // ✅ Delete from Cloudinary if image exists
+    // Delete from Cloudinary if image exists
     if (imageUrl && imageUrl.includes("cloudinary.com")) {
-      // Extract public_id properly
-      const parts = imageUrl.split("/");
-      const folderIndex = parts.findIndex(p => p === "messages");
+      // Extract public_id safely
+      const urlParts = imageUrl.split("/");
+      const folderIndex = urlParts.findIndex(p => p.toLowerCase() === "message" || p.toLowerCase() === "messages");
       if (folderIndex !== -1) {
-        const publicIdWithExt = parts.slice(folderIndex + 1).join("/"); // e.g. 1730881234_image.jpg
-        const publicId = "messages/" + publicIdWithExt.split(".")[0];
+        const publicIdWithExt = urlParts.slice(folderIndex + 1).join("/"); // e.g., 12345_image.jpg
+        const publicId = urlParts[folderIndex] + "/" + publicIdWithExt.split(".")[0]; // messages/12345_image
         await cloudinary.uploader.destroy(publicId);
         console.log("🗑️ Deleted Cloudinary image:", publicId);
       }
