@@ -288,7 +288,6 @@
   function previewImage(event) {
     const file = event.target.files[0];
     const preview = document.getElementById("imagePreview");
-
     if (file) {
       const reader = new FileReader();
       reader.onload = e => {
@@ -312,13 +311,12 @@
     const loadingOverlay = document.getElementById("loadingOverlay");
 
     if (!name || !email || !message) {
-      alert("⚠️ Please fill in all fields before sending!");
+      alert("⚠️ Please fill in all fields!");
       return;
     }
 
-    // ✅ Gmail-only validation
     if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
-      alert("⚠️ Only Gmail addresses are allowed (e.g., example@gmail.com).");
+      alert("⚠️ Only Gmail addresses are allowed!");
       return;
     }
 
@@ -328,22 +326,18 @@
     formData.append("message", message);
     if (image) formData.append("image", image);
 
-    // ✅ Automatically detect backend URL
-    const backendURL =
-      window.location.hostname === "localhost"
-        ? "http://localhost:10000" // Local backend
-        : "https://mtpdepartment.onrender.com"; // 🔁 Replace with your Render backend URL
+    // ✅ Use your deployed backend URL
+    const backendURL = "https://mtpdepartment.onrender.com"; // Must match deployed backend
 
     try {
-      loadingOverlay.style.display = "flex"; // Show loading
-      await new Promise(resolve => setTimeout(resolve, 1200)); // smooth delay
+      loadingOverlay.style.display = "flex";
 
-      const res = await fetch(`${backendURL}/contact`, {
+      // POST message to backend
+      const res = await fetch(`${backendURL}/messages`, { // <-- ensure backend route is /messages
         method: "POST",
-        body: formData,
+        body: formData
       });
 
-      await new Promise(resolve => setTimeout(resolve, 500)); // smooth finish
       loadingOverlay.style.display = "none";
 
       if (res.ok) {
@@ -363,7 +357,7 @@
     } catch (err) {
       loadingOverlay.style.display = "none";
       console.error("❌ Network Error:", err);
-      alert("⚠️ Cannot reach backend. Please ensure Node.js server is running or deployed backend URL is correct.");
+      alert("⚠️ Cannot reach backend. Check backend URL and CORS settings.");
     }
   }
 
@@ -371,15 +365,15 @@
   const menuIcon = document.getElementById("menuIcon");
   const dropdownMenu = document.getElementById("dropdownMenu");
 
-  menuIcon.addEventListener("click", () => {
-    dropdownMenu.classList.toggle("show");
-  });
-
-  window.addEventListener("click", e => {
-    if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
-      dropdownMenu.classList.remove("show");
-    }
-  });
+  if (menuIcon && dropdownMenu) {
+    menuIcon.addEventListener("click", () => dropdownMenu.classList.toggle("show"));
+    window.addEventListener("click", e => {
+      if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
+        dropdownMenu.classList.remove("show");
+      }
+    });
+  }
 </script>
+
 </body>
 </html>
