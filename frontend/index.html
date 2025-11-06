@@ -774,7 +774,7 @@ async function searchCard() {
         <div class="id-card" onclick="this.classList.toggle('flipped')">
           <div class="card-face front">
             <img class="corner-logo" src="/img/National_Thermal_Power_logo.svg.png" alt="Logo" />
-            <img class="profile-img" src="https://idcard-w.onrender.com${p.photo}" alt="Profile Photo" />
+            <img class="profile-img" src="https://mtpdepartment.onrender.com${p.photo}" alt="Profile Photo" />
             <div class="info-side">
               <h2>${p.name}</h2>
               <p><strong>ID No:</strong> ${p.empId}</p>
@@ -924,7 +924,7 @@ async function refreshMessages() {
           <td>${msg.message}</td>
           <td>${
             msg.image
-              ? `<img src="https://idcard-w.onrender.com/uploads/messages/${msg.image}" width="80">`
+              ? `<img src="https://mtpdepartment.onrender.com/uploads/messages/${msg.image}" width="80">`
               : "—"
           }</td>
           <td>${new Date(msg.created_at).toLocaleString()}</td>
