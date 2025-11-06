@@ -1,20 +1,19 @@
 import express from "express";
 import db from "../db.js";
-import { uploadCard, cloudinary } from "../cloudinaryConfig.js"; // Cloudinary setup
+import { uploadCard } from "../cloudinaryConfig.js"; // You may rename this to a local multer if not using Cloudinary anymore
 
 const router = express.Router();
 
 /* ===========================================================
-   🟩 1. Add New ID Card (Upload photo to Cloudinary)
+   🟩 1. Add New ID Card (Upload photo locally)
 =========================================================== */
 router.post("/add", uploadCard.single("photo"), async (req, res) => {
   try {
     const { name, empId, position, gender, phone, email, company, skills } = req.body;
 
-    // Get Cloudinary URL from multer upload
+    // Get uploaded file path
     const photoUrl = req.file?.path || null;
 
-    // Validate required fields
     if (!name || !empId || !position || !gender || !phone || !email || !company) {
       return res.status(400).json({ error: "All required fields must be filled" });
     }
@@ -70,37 +69,21 @@ router.get("/search", async (req, res) => {
 });
 
 /* ===========================================================
-   🟩 4. Delete Card by ID (and remove from Cloudinary)
+   🟩 4. Delete Card by ID (Local file remains or handle separately)
 =========================================================== */
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    // 1️⃣ Get the Cloudinary image URL
     const [rows] = await db.query("SELECT photo FROM cards WHERE id = ?", [id]);
     if (!rows.length) return res.status(404).json({ error: "Card not found" });
 
-    const photoUrl = rows[0].photo;
+    // Optional: you can delete the local file here using fs.unlink if needed
+    // const photoPath = rows[0].photo;
+    // if (photoPath) fs.unlinkSync(photoPath);
 
-    // 2️⃣ Delete DB record
     const [result] = await db.query("DELETE FROM cards WHERE id = ?", [id]);
     if (result.affectedRows === 0) return res.status(404).json({ error: "Failed to delete card" });
-
-    // 3️⃣ Delete image from Cloudinary if exists
-    if (photoUrl?.includes("cloudinary.com")) {
-      try {
-        // Extract public_id from Cloudinary URL
-        const parts = photoUrl.split("/");
-        const folderIndex = parts.findIndex(p => p === "Cards") || 0;
-        const publicIdWithExt = parts.slice(folderIndex).join("/"); // e.g., Cards/filename.jpg
-        const publicId = publicIdWithExt.replace(/\.[^/.]+$/, ""); // remove extension
-
-        await cloudinary.uploader.destroy(publicId);
-        console.log("🗑️ Deleted Cloudinary image:", publicId);
-      } catch (err) {
-        console.warn("⚠️ Cloudinary delete failed:", err.message);
-      }
-    }
 
     res.json({ success: true, message: "✅ Card deleted successfully!" });
   } catch (err) {
