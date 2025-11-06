@@ -23,9 +23,8 @@ app.use(
   cors({ 
     origin: [
       "http://localhost:5000",
-      "https://mtpdepartment.onrender.com", // ✅ Fixed typo
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+      "https://mtpdepatment.onrender.com",
+    ], methods: ["GET", "POST", "PUT", "DELETE"], 
     credentials: true, 
   })
 );
@@ -65,10 +64,10 @@ app.use("/api/updates", updatesRoutes);
 // 📩 Contact form routes
 app.use("/messages", contactRoutes);
 
-// Optional local POST/GET for messages
+// Optional: local POST/GET for messages if not using contactRoutes
 app.post("/contact", upload.single("image"), async (req, res) => {
   const { name, email, message } = req.body;
-  const image = req.file ? `Upload/Message/${req.file.filename}` : null; // ✅ Match folder
+  const image = req.file ? `Upload/Message/${req.file.filename}` : null;
 
   if (!name || !email || !message) {
     return res.status(400).json({ error: "All fields are required" });
