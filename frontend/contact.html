@@ -316,7 +316,7 @@
       return;
     }
 
-    // Gmail-only validation
+    // ✅ Gmail-only validation
     if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
       alert("⚠️ Only Gmail addresses are allowed (e.g., example@gmail.com).");
       return;
@@ -328,20 +328,22 @@
     formData.append("message", message);
     if (image) formData.append("image", image);
 
-    // Automatically select backend URL
+    // ✅ Automatically detect backend URL
     const backendURL =
       window.location.hostname === "localhost"
-        ? "http://localhost:5000" // Local backend
-        : "https://mtpdepartment.onrender.com"; // Deployed backend
+        ? "http://localhost:10000" // Local backend
+        : "https://mtpdepartment.onrender.com"; // 🔁 Replace with your Render backend URL
 
     try {
-      loadingOverlay.style.display = "flex";
+      loadingOverlay.style.display = "flex"; // Show loading
+      await new Promise(resolve => setTimeout(resolve, 1200)); // smooth delay
 
-      const res = await fetch(`${backendURL}/messages`, {
+      const res = await fetch(`${backendURL}/contact`, {
         method: "POST",
-        body: formData
+        body: formData,
       });
 
+      await new Promise(resolve => setTimeout(resolve, 500)); // smooth finish
       loadingOverlay.style.display = "none";
 
       if (res.ok) {
@@ -355,13 +357,13 @@
           document.getElementById("imagePreview").style.display = "none";
         }, 2500);
       } else {
-        const data = await res.json();
-        alert("❌ Failed to send message. " + (data.msg || data.error || "Server error"));
+        const errText = await res.text();
+        alert("❌ Failed to send message. Server says: " + errText);
       }
     } catch (err) {
       loadingOverlay.style.display = "none";
       console.error("❌ Network Error:", err);
-      alert("⚠️ Cannot reach backend. Please check if the backend is running or deployed URL is correct.");
+      alert("⚠️ Cannot reach backend. Please ensure Node.js server is running or deployed backend URL is correct.");
     }
   }
 
@@ -369,16 +371,15 @@
   const menuIcon = document.getElementById("menuIcon");
   const dropdownMenu = document.getElementById("dropdownMenu");
 
-  if (menuIcon && dropdownMenu) {
-    menuIcon.addEventListener("click", () => dropdownMenu.classList.toggle("show"));
-    window.addEventListener("click", e => {
-      if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
-        dropdownMenu.classList.remove("show");
-      }
-    });
-  }
+  menuIcon.addEventListener("click", () => {
+    dropdownMenu.classList.toggle("show");
+  });
+
+  window.addEventListener("click", e => {
+    if (!menuIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
+      dropdownMenu.classList.remove("show");
+    }
+  });
 </script>
-
-
 </body>
 </html>
