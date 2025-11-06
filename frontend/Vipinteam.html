@@ -559,263 +559,261 @@ td img {
 </div>
 
 <script>
-  const API_BASE = "https://mtpdepartment.onrender.com"; // ✅ your backend API base URL
-  const token = localStorage.getItem("token");
+const API_BASE = "https://mtpdepartment.onrender.com";
+const token = localStorage.getItem("token");
 
-  // 🧱 Protect Admin Page
-  if (!token) {
-    alert("Access denied! Please login as admin.");
-    window.location.href = "Vipinteam.html";
-  }
+// 🧱 Protect Admin Page
+if (!token) {
+  alert("Access denied! Please login as admin.");
+  window.location.href = "Vipinteam.html";
+}
 
-  /* ================== AUTH HANDLING ================== */
-  function handleAuthError(response) {
-    if (response.status === 401 || response.status === 403) {
-      alert("⚠️ Session expired! Please log in again.");
-      localStorage.removeItem("token");
-      window.location.href = "Vipinteam.html";
-      return true;
-    }
-    return false;
-  }
-
-  function logout() {
+// ================= AUTH HANDLING =================
+function handleAuthError(response) {
+  if (response.status === 401 || response.status === 403) {
+    alert("⚠️ Session expired! Please log in again.");
     localStorage.removeItem("token");
-    alert("✅ Logged out successfully!");
-    window.location.href = "Vipinteam222.html";
+    window.location.href = "Vipinteam.html";
+    return true;
   }
+  return false;
+}
 
-  /* ================== CARD MANAGEMENT ================== */
-  function openPopup() {
-    document.getElementById("popup").style.display = "flex";
-  }
-  function closePopup() {
-    document.getElementById("popup").style.display = "none";
-  }
+function logout() {
+  localStorage.removeItem("token");
+  alert("✅ Logged out successfully!");
+  window.location.href = "Vipinteam222.html";
+}
 
-  document.getElementById("cardForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const status = document.getElementById("uploadStatus");
-    const formData = new FormData(e.target);
+// ================= CARD MANAGEMENT =================
+function openPopup() { document.getElementById("popup").style.display = "flex"; }
+function closePopup() { document.getElementById("popup").style.display = "none"; }
 
-    try {
-      const res = await fetch(`${API_BASE}/api/cards/add`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
+document.getElementById("cardForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const status = document.getElementById("uploadStatus");
+  const formData = new FormData(e.target);
 
-      if (handleAuthError(res)) return;
-      const data = await res.json();
+  try {
+    const res = await fetch(`${API_BASE}/api/cards/add`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData
+    });
+    if (handleAuthError(res)) return;
 
-      if (res.ok) {
-        status.style.color = "green";
-        status.textContent = "✅ Card added successfully!";
-        e.target.reset();
-        fetchCards();
-        setTimeout(closePopup, 1000);
-      } else {
-        status.style.color = "red";
-        status.textContent = "❌ " + (data.error || "Upload failed!");
-      }
-    } catch {
+    const data = await res.json();
+    if (res.ok) {
+      status.style.color = "green";
+      status.textContent = "✅ Card added successfully!";
+      e.target.reset();
+      fetchCards();
+      setTimeout(closePopup, 1000);
+    } else {
       status.style.color = "red";
-      status.textContent = "⚠️ Server not responding!";
+      status.textContent = "❌ " + (data.error || "Upload failed!");
     }
-  });
+  } catch (err) {
+    console.error("Error adding card:", err);
+    status.style.color = "red";
+    status.textContent = "⚠️ Server not responding!";
+  }
+});
 
-  async function fetchCards() {
-    const tableBody = document.querySelector("#cardsTable tbody");
-    tableBody.innerHTML = "<tr><td colspan='8'>Loading...</td></tr>";
+async function fetchCards() {
+  const tableBody = document.querySelector("#cardsTable tbody");
+  tableBody.innerHTML = "<tr><td colspan='8'>Loading...</td></tr>";
 
-    try {
-      const res = await fetch(`${API_BASE}/api/cards/all`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+  try {
+    const res = await fetch(`${API_BASE}/api/cards/all`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (handleAuthError(res)) return;
 
-      if (handleAuthError(res)) return;
-      const cards = await res.json();
+    const data = await res.json();
+    const cards = Array.isArray(data) ? data : data.cards || [];
 
-      if (!res.ok || cards.length === 0) {
-        tableBody.innerHTML = "<tr><td colspan='8'>No records found.</td></tr>";
-        return;
-      }
-
-      tableBody.innerHTML = cards.map(c => `
-        <tr>
-          <td><img src="https://idcard-w.onrender.com${c.photo.startsWith('/') ? c.photo : '/' + c.photo}" alt="Photo"></td>
-          <td>${c.name}</td>
-          <td>${c.empId}</td>
-          <td>${c.position}</td>
-          <td>${c.company}</td>
-          <td>${c.email}</td>
-          <td>${c.phone}</td>
-          <td><button class="delete-btn" onclick="deleteCard(${c.id})">🗑 Delete</button></td>
-        </tr>
-      `).join("");
-    } catch {
-      tableBody.innerHTML = "<tr><td colspan='8'>⚠️ Error loading data.</td></tr>";
+    if (!cards.length) {
+      tableBody.innerHTML = "<tr><td colspan='8'>No records found.</td></tr>";
+      return;
     }
+
+    tableBody.innerHTML = cards.map(c => `
+      <tr>
+        <td><img src="${API_BASE}${c.photo.startsWith('/') ? c.photo : '/' + c.photo}" alt="Photo"></td>
+        <td>${c.name}</td>
+        <td>${c.empId}</td>
+        <td>${c.position}</td>
+        <td>${c.company}</td>
+        <td>${c.email}</td>
+        <td>${c.phone}</td>
+        <td><button class="delete-btn" onclick="deleteCard(${c.id})">🗑 Delete</button></td>
+      </tr>
+    `).join("");
+
+  } catch (err) {
+    console.error("Error fetching cards:", err);
+    tableBody.innerHTML = "<tr><td colspan='8'>⚠️ Error loading data.</td></tr>";
   }
+}
 
-  async function deleteCard(id) {
-    if (!confirm("Are you sure you want to delete this card?")) return;
-    try {
-      const res = await fetch(`${API_BASE}/api/cards/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+async function deleteCard(id) {
+  if (!confirm("Are you sure you want to delete this card?")) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/cards/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (handleAuthError(res)) return;
 
-      if (handleAuthError(res)) return;
-      const data = await res.json();
-
-      if (res.ok) {
-        alert("✅ Card deleted successfully!");
-        fetchCards();
-      } else {
-        alert("❌ " + (data.error || "Failed to delete card."));
-      }
-    } catch {
-      alert("⚠️ Server not responding!");
+    const data = await res.json();
+    if (res.ok) {
+      alert("✅ Card deleted successfully!");
+      fetchCards();
+    } else {
+      alert("❌ " + (data.error || "Failed to delete card."));
     }
+  } catch (err) {
+    console.error("Error deleting card:", err);
+    alert("⚠️ Server not responding!");
   }
+}
 
-  /* ================== MESSAGES MANAGEMENT ================== */
-  async function refreshMessages() {
-    const table = document.querySelector("#messageTable tbody");
-    table.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
+// ================= MESSAGES MANAGEMENT =================
+async function refreshMessages() {
+  const table = document.querySelector("#messageTable tbody");
+  table.innerHTML = "<tr><td colspan='6'>Loading...</td></tr>";
 
-    try {
-      const res = await fetch(`${API_BASE}/messages`);
-      if (!res.ok) {
-        table.innerHTML = "<tr><td colspan='6'>⚠️ Failed to fetch messages.</td></tr>";
-        return;
-      }
-
-      const messages = await res.json();
-      if (!messages.length) {
-        table.innerHTML = "<tr><td colspan='6'>No messages found.</td></tr>";
-        return;
-      }
-
-      table.innerHTML = messages.map((msg, i) => `
-        <tr>
-          <td>${i + 1}</td>
-          <td>${msg.name}</td>
-          <td>${msg.email}</td>
-          <td>${msg.message}</td>
-          <td>${msg.image ? `<img src="https://idcard-w.onrender.com/uploads/messages/${msg.image}" width="80">` : "—"}</td>
-          <td>${new Date(msg.created_at).toLocaleString()}</td>
-        </tr>
-      `).join("");
-    } catch (err) {
-      console.error("Error fetching messages:", err);
-      table.innerHTML = "<tr><td colspan='6'>⚠️ Failed to load messages.</td></tr>";
+  try {
+    const res = await fetch(`${API_BASE}/messages`);
+    if (!res.ok) {
+      table.innerHTML = "<tr><td colspan='6'>⚠️ Failed to fetch messages.</td></tr>";
+      return;
     }
+
+    const messages = await res.json();
+    if (!messages.length) {
+      table.innerHTML = "<tr><td colspan='6'>No messages found.</td></tr>";
+      return;
+    }
+
+    table.innerHTML = messages.map((msg, i) => `
+      <tr>
+        <td>${i+1}</td>
+        <td>${msg.name}</td>
+        <td>${msg.email}</td>
+        <td>${msg.message}</td>
+        <td>${msg.image ? `<img src="${API_BASE}/uploads/messages/${msg.image}" width="80">` : "—"}</td>
+        <td>${new Date(msg.created_at).toLocaleString()}</td>
+      </tr>
+    `).join("");
+
+  } catch (err) {
+    console.error("Error fetching messages:", err);
+    table.innerHTML = "<tr><td colspan='6'>⚠️ Failed to load messages.</td></tr>";
   }
+}
 
-  /* ================== UPDATES MANAGEMENT ================== */
-  /* ================== UPDATES MANAGEMENT ================== */
-  function openUpdatePopup() {
-    document.getElementById("updatePopup").style.display = "flex";
-  }
-  function closeUpdatePopup() {
-    document.getElementById("updatePopup").style.display = "none";
-  }
+// ================= UPDATES MANAGEMENT =================
+function openUpdatePopup() { document.getElementById("updatePopup").style.display = "flex"; }
+function closeUpdatePopup() { document.getElementById("updatePopup").style.display = "none"; }
 
-  // ➕ Add Update (Admin Only)
-  document.getElementById("updateForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const status = document.getElementById("updateStatus");
-    const formData = Object.fromEntries(new FormData(e.target).entries());
+document.getElementById("updateForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const status = document.getElementById("updateStatus");
+  const formData = Object.fromEntries(new FormData(e.target).entries());
 
-    try {
-      const res = await fetch(`${API_BASE}/api/updates/add`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
+  try {
+    const res = await fetch(`${API_BASE}/api/updates/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(formData)
+    });
 
-      if (handleAuthError(res)) return;
-      const data = await res.json();
+    if (handleAuthError(res)) return;
 
-      if (res.ok) {
-        status.style.color = "green";
-        status.textContent = "✅ Update added successfully!";
-        e.target.reset();
-        fetchUpdates();
-        setTimeout(closeUpdatePopup, 1000);
-      } else {
-        status.style.color = "red";
-        status.textContent = "❌ " + (data.error || "Failed to add update!");
-      }
-    } catch {
+    const data = await res.json();
+    if (res.ok) {
+      status.style.color = "green";
+      status.textContent = "✅ Update added successfully!";
+      e.target.reset();
+      fetchUpdates();
+      setTimeout(closeUpdatePopup, 1000);
+    } else {
       status.style.color = "red";
-      status.textContent = "⚠️ Server not responding!";
+      status.textContent = "❌ " + (data.error || "Failed to add update!");
     }
-  });
 
-  // 📜 Fetch Updates (Public Access)
-  async function fetchUpdates() {
-    const tableBody = document.querySelector("#updatesTable tbody");
-    tableBody.innerHTML = "<tr><td colspan='5'>Loading...</td></tr>";
-
-    try {
-      const res = await fetch(`${API_BASE}/api/updates/all`);
-      const updates = await res.json();
-
-      if (!res.ok || updates.length === 0) {
-        tableBody.innerHTML = "<tr><td colspan='5'>No updates found.</td></tr>";
-        return;
-      }
-
-      tableBody.innerHTML = updates.map((u, i) => `
-        <tr>
-          <td>${i + 1}</td>
-          <td>${u.link ? `<a href="${u.link}" target="_blank" style="color:#007bff;font-weight:600;">${u.title}</a>` : u.title}</td>
-          <td>${u.description}</td>
-          <td>${new Date(u.created_at).toLocaleString()}</td>
-          <td><button class="delete-btn" onclick="deleteUpdate(${u.id})">🗑 Delete</button></td>
-        </tr>
-      `).join("");
-    } catch {
-      tableBody.innerHTML = "<tr><td colspan='5'>⚠️ Error loading updates.</td></tr>";
-    }
+  } catch (err) {
+    console.error("Error adding update:", err);
+    status.style.color = "red";
+    status.textContent = "⚠️ Server not responding!";
   }
+});
 
-  // 🗑 Delete Update (Admin Only)
-  async function deleteUpdate(id) {
-    if (!confirm("Are you sure you want to delete this update?")) return;
-    try {
-      const res = await fetch(`${API_BASE}/api/updates/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+async function fetchUpdates() {
+  const tableBody = document.querySelector("#updatesTable tbody");
+  tableBody.innerHTML = "<tr><td colspan='5'>Loading...</td></tr>";
 
-      if (handleAuthError(res)) return;
-      const data = await res.json();
+  try {
+    const res = await fetch(`${API_BASE}/api/updates/all`);
+    const data = await res.json();
+    const updates = Array.isArray(data) ? data : data.updates || [];
 
-      if (res.ok) {
-        alert("✅ Update deleted successfully!");
-        fetchUpdates();
-      } else {
-        alert("❌ " + (data.error || "Failed to delete update."));
-      }
-    } catch {
-      alert("⚠️ Server not responding!");
+    if (!updates.length) {
+      tableBody.innerHTML = "<tr><td colspan='5'>No updates found.</td></tr>";
+      return;
     }
-  }
 
-  /* ================== INIT ALL ================== */
+    tableBody.innerHTML = updates.map((u,i) => `
+      <tr>
+        <td>${i+1}</td>
+        <td>${u.link ? `<a href="${u.link}" target="_blank" style="color:#007bff;font-weight:600">${u.title}</a>` : u.title}</td>
+        <td>${u.description}</td>
+        <td>${new Date(u.created_at).toLocaleString()}</td>
+        <td><button class="delete-btn" onclick="deleteUpdate(${u.id})">🗑 Delete</button></td>
+      </tr>
+    `).join("");
+
+  } catch (err) {
+    console.error("Error fetching updates:", err);
+    tableBody.innerHTML = "<tr><td colspan='5'>⚠️ Error loading updates.</td></tr>";
+  }
+}
+
+async function deleteUpdate(id) {
+  if (!confirm("Are you sure you want to delete this update?")) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/updates/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (handleAuthError(res)) return;
+
+    const data = await res.json();
+    if (res.ok) {
+      alert("✅ Update deleted successfully!");
+      fetchUpdates();
+    } else {
+      alert("❌ " + (data.error || "Failed to delete update."));
+    }
+
+  } catch (err) {
+    console.error("Error deleting update:", err);
+    alert("⚠️ Server not responding!");
+  }
+}
+
+// ================= INIT =================
 window.addEventListener("load", () => {
-    fetchUpdates();
-    if (typeof fetchCards === "function") fetchCards();
-    if (typeof refreshMessages === "function") refreshMessages();
-    if (typeof fetchTestimonials === "function") fetchTestimonials();
-  });
+  fetchUpdates();
+  if (typeof fetchCards === "function") fetchCards();
+  if (typeof refreshMessages === "function") refreshMessages();
+});
 </script>
 
 </script>
